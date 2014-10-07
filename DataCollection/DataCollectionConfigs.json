@@ -1,0 +1,12 @@
+{
+  "development": {
+    "maxTweetsPerCrawl": 5,
+    "runningInterval": 300000,
+    "logRootPath": "~/logs/"
+  },
+  "production": {
+    "maxTweetsPerCrawl": 5,
+    "runningInterval": 300000,
+    "logRootPath": "~/logs/"    
+  }
+}

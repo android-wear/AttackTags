@@ -1,0 +1,10 @@
+{
+  "production": [
+    {"userName": "Dmitri Alperovitch", "screenName": "DmitriCyber"},
+    {"userName": "Steven Chabinsky", "screenName": "StevenChabinsky"},
+    {"userName": "Stephen Coty", "screenName": "AlertLogic_ACID"}
+  ],
+  "development": [
+    {"userName": "Yang Sha", "screenName": "yangsha"}
+  ]
+}

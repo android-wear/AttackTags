@@ -79,23 +79,22 @@ Crawler.prototype.crawl = function() {
 
 // TwitterApi initializes the api with auth tokens.
 // Emits 'error' event with error messages.
-var TwitterApi = function TwitterApi(twitterAuth) {
-    this.twitterAuth = twitterAuth;
+var TwitterApi = function TwitterApi() {
     EventEmitter.call(this);
 }
 
 util.inherits(TwitterApi, EventEmitter);
 
-TwitterApi.prototype.getApi = function() {
-    if(!this.twitterAuth.isValid()) {
+TwitterApi.prototype.withAuthToken = function(authToken) {
+    if(!authToken.isValid()) {
 		this.emit('error', new Error("twitter tokens are not valid."));
 		return null;
     }
     return new twitter({
-        consumer_key: this.twitterAuth.consumerKey,
-        consumer_secret: this.twitterAuth.consumerSecret,
-        access_token_key: this.twitterAuth.accessTokenKey,
-        access_token_secret: this.twitterAuth.accessTokenSecret});
+        consumer_key: authToken.consumerKey,
+        consumer_secret: authToken.consumerSecret,
+        access_token_key: authToken.accessTokenKey,
+        access_token_secret: authToken.accessTokenSecret});
 }
 
 module.exports.TwitterCrawler = Crawler;

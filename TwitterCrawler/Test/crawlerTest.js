@@ -8,13 +8,13 @@ var testAuth = new TwitterAuth(
     'NgfLW4RAXJCKEU8Jbrf3dutCy458Q0lLI50RxPMgMXHJS');
 
 // Verify the TwitterApi.
-var testTwitterApi = new twitter.TwitterApi(testAuth);
+var testTwitterApi = new twitter.TwitterApi();
 
 testTwitterApi.on('error', function(err){
     console.log("Failed to get twitter api.");
     process.exit(1);
 });
-testTwitterApi.getApi();
+testTwitterApi.withAuthToken(testAuth);
 
 // Use the mock twitter api (a.k.a. MockTwitterApi) to verify the TwitterCrawler.
 var verifyTwitterCrawler = function(screenNames, count) {
