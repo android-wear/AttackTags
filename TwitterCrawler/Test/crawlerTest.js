@@ -1,6 +1,6 @@
 var TwitterAuth = require('../twitterAuthToken.js');
 var twitter = require('../twitterCrawler.js');
-var MockTwitterApi = require('./mockTwitterApi.js');
+var MockTwitterModule = require('./mockTwitterModule.js');
 var testAuth = new TwitterAuth(
     'Sf2w36x3LVCcD5T5POEzny6zl',
     'ZqGqFO5Hv2onOPkXOdpLqk4bu2CsFAAWXVWALBxAjDX0VZJW80',
@@ -19,9 +19,9 @@ testTwitterApi.withAuthToken(testAuth);
 // Use the mock twitter api (a.k.a. MockTwitterApi) to verify the TwitterCrawler.
 var verifyTwitterCrawler = function(screenNames, count) {
     var testTweet = "testtest";
-    var mockApi = new MockTwitterApi(testTweet, 1000);
+    var mockTwitterModule = new MockTwitterModule(testTweet, 1000);
     var testTwitterCrawler = new twitter.TwitterCrawler(
-        mockApi, screenNames, count);
+    	mockTwitterModule, screenNames, count);
     testTwitterCrawler
     .on('data', function(userName, data) {
 	if (screenNames.indexOf(userName) == -1 ) {

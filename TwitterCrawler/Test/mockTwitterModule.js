@@ -1,16 +1,16 @@
-var MockTwitterApi = function MockTwitterApi(fakeTweet, fakeNetworkDelaySeconds) {
+var MockTwitterModule = function MockTwitterModule(fakeTweet, fakeNetworkDelaySeconds) {
     this.fakeTweet = fakeTweet;
     this.fakeNetworkDelaySeconds = fakeNetworkDelaySeconds ? fakeNetworkDelaySeconds : 1;
 }
 
 // Fake twitter login.
-MockTwitterApi.prototype.login = function() {
+MockTwitterModule.prototype.login = function() {
     return;
 }
 
 // Fake the getUserTimeline.
-MockTwitterApi.prototype.getUserTimeline = function(input, callback) {
+MockTwitterModule.prototype.getUserTimeline = function(input, callback) {
     setTimeout(callback(this.fakeTweet), this.fakeNetworkDelaySeconds);
 }
 
-module.exports = MockTwitterApi;
+module.exports = MockTwitterModule;

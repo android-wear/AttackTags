@@ -1,5 +1,5 @@
 var util = require('util'),
-    twitter = require('twitter'),
+    twitterModule = require('twitter'),
     EventEmitter = require('events').EventEmitter;
 /*
 var twit = new twitter({
@@ -17,8 +17,8 @@ var maxSupportedTweetsCount = 5;
 // Emits 'error' event through this.validate(). 
 // Emits 'data' event through this.crawlOneUser().
 // Emits 'done' event when all tweets have been crawled.
-var Crawler = function Crawler(twitterApi, screenNames, tweetsCount) {	
-    this.twitterApi = twitterApi;
+var Crawler = function Crawler(twitterModule, screenNames, tweetsCount) {	
+    this.twitterModule = twitterModule;
     this.screenNames = screenNames;
     this.tweetsCount = tweetsCount;
     this.processed = 0;
@@ -31,7 +31,7 @@ var Crawler = function Crawler(twitterApi, screenNames, tweetsCount) {
 util.inherits(Crawler, EventEmitter);
 
 Crawler.prototype.validate = function() {
-    if (!this.twitterApi || !this.screenNames || !this.tweetsCount || 
+    if (!this.twitterModule || !this.screenNames || !this.tweetsCount || 
     		isNaN(this.tweetsCount)) {    	
 		this.emit('error', new Error(
 		    "twitterAuth or screenName or tweetsCount are null."));
@@ -47,8 +47,8 @@ Crawler.prototype.validate = function() {
 
 // Crawl data from user (a.k.a. screenName) home page.
 // Emit 'data' event with screenName and data.
-var crawlOneUser = function(twitterApi, screenName, tweetsCount, crawler) {
-    twitterApi.getUserTimeline(
+var crawlOneUser = function(twitterModule, screenName, tweetsCount, crawler) {
+	twitterModule.getUserTimeline(
 		{screen_name:screenName, count:tweetsCount}, 
 		function(data) {
 		    crawler.processTweet(screenName, data);
@@ -71,13 +71,14 @@ Crawler.prototype.crawl = function() {
     if(!this.validate()) {
     	return;
     }
-    this.twitterApi.login();
+    this.twitterModule.login();
     for (var i=0; i<this.screenNames.length; ++i) {
-    	crawlOneUser(this.twitterApi, this.screenNames[i], this.tweetsCount, this);
+    	crawlOneUser(this.twitterModule, this.screenNames[i], this.tweetsCount, this);
     }
 }
 
-// TwitterApi initializes the api with auth tokens.
+// Twitter initializes a twitter module with auth tokens.
+// Call TwitterApi.withAuthToken(authToken) to get the twitter module.
 // Emits 'error' event with error messages.
 var TwitterApi = function TwitterApi() {
     EventEmitter.call(this);
@@ -90,7 +91,7 @@ TwitterApi.prototype.withAuthToken = function(authToken) {
 		this.emit('error', new Error("twitter tokens are not valid."));
 		return null;
     }
-    return new twitter({
+    return new twitterModule({
         consumer_key: authToken.consumerKey,
         consumer_secret: authToken.consumerSecret,
         access_token_key: authToken.accessTokenKey,
