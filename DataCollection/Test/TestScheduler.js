@@ -1,6 +1,6 @@
 var twitter = require('../../TwitterCrawler/twitterCrawler.js');
 var MockTwitterModule = require('../../TwitterCrawler/Test/mockTwitterModule.js');
-var TwitterDataCollector = require ('../TwitterDataCollector.js');
+var Scheduler = require ('../Scheduler.js');
 
 var testTweet = "testtest";
 var mockTwitterModule = new MockTwitterModule(testTweet, 1000);
@@ -16,6 +16,6 @@ var verify = function(content) {
 }
 var callbacks = [];
 callbacks.push(verify);
-var twitterDataCollector = new TwitterDataCollector(testTwitterCrawler, callbacks);
-var id = twitterDataCollector.run(100);
-twitterDataCollector.stop(id);
+var scheduler = new Scheduler(testTwitterCrawler, callbacks);
+var id = scheduler.start(100);
+scheduler.stop(id);

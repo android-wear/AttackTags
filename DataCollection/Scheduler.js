@@ -1,5 +1,5 @@
 // Set up twitter login credentials.
-var TwitterDataCollector = function TwitterDataCollector(twitterCrawler, callbacks) {
+var Scheduler = function Scheduler(twitterCrawler, callbacks) {
 	this.callbacks = callbacks;
 	this.twitterCrawler = twitterCrawler;		
 }
@@ -20,12 +20,12 @@ var runOnce = function (twitterCrawler, content, callbacks) {
 	twitterCrawler.crawl();
 }
 
-TwitterDataCollector.prototype.run = function (runningInterval) {
+Scheduler.prototype.start = function (runningInterval) {
 	return setInterval(runOnce(this.twitterCrawler, [], this.callbacks), runningInterval);
 }
 
-TwitterDataCollector.prototype.stop = function (id) {
+Scheduler.prototype.stop = function (id) {
 	clearInterval(id);
 }
 
-module.exports = TwitterDataCollector;
+module.exports = Scheduler;
