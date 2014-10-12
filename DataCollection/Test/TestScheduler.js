@@ -6,15 +6,32 @@ var assert = require('assert');
 var testTweet = "testtest";
 var mockTwitterModule = new MockTwitterModule(testTweet, 1000);
 var testTwitterCrawler = new twitter.TwitterCrawler(
-    mockTwitterModule, ["DmitriCyber"], 1);
+    mockTwitterModule, ["DmitriCyber", "YANGSHA"], 2);
+
+var totalRunningTimes = 0;
 var verify = function(content) {
-    assert.equal(content.length, 1, "Should only return one tweet.");
-    assert.equal(content[0], testTweet, "Tweet should be equal to " + testTweet);
-    console.log("-----PASSED------");
+    assert.equal(content.length, 2, "Should only return one tweet.");
+    content.forEach(function(data) {
+        assert.equal(data, testTweet, "Tweet should be equal to " + testTweet);
+    });
+    ++totalRunningTimes;
+    console.log("------PASSED--------");
 }
 
 var callbacks = [];
 callbacks.push(verify);
 var scheduler = new Scheduler(testTwitterCrawler, callbacks);
-var id = scheduler.start(100);
-scheduler.stop(id);
+
+var finishRunAndVerify = function (scheduler, 
+                                   id, 
+                                   expectedRunningTimes) {
+    scheduler.stop(id);
+    assert.equal(totalRunningTimes, expectedRunningTimes, 
+                 "actual: " + totalRunningTimes + " expected: " + expectedRunningTimes);
+}
+var runningIntervalInMs = 500;
+var expectedRunningTimes = 10;
+var id = scheduler.start(runningIntervalInMs);
+//setTimeout(scheduler.stop, runningIntervalInMs * totalRounds + 1, id);
+setTimeout(finishRunAndVerify, runningIntervalInMs * expectedRunningTimes, scheduler, id,
+           expectedRunningTimes - 1);

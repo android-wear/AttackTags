@@ -62,6 +62,7 @@ Crawler.prototype.processTweet = function(screenName, data) {
     this.emit('data', screenName, data);
     ++this.processed;
     if (this.processed == this.maxToProcess) {
+        this.processed = 0;
     	this.emit('done', this.maxToProcess);
     }
 }
