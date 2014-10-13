@@ -30,8 +30,7 @@ var finishRunAndVerify = function (scheduler,
                  "actual: " + totalRunningTimes + " expected: " + expectedRunningTimes);
 }
 var runningIntervalInMs = 500;
-var expectedRunningTimes = 10;
+var expectedRunningTimes = 3;
 var id = scheduler.start(runningIntervalInMs);
-//setTimeout(scheduler.stop, runningIntervalInMs * totalRounds + 1, id);
 setTimeout(finishRunAndVerify, runningIntervalInMs * expectedRunningTimes, scheduler, id,
-           expectedRunningTimes - 1);
+           expectedRunningTimes);

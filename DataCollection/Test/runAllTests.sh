@@ -1,0 +1,9 @@
+echo "----TestConfigManager.js-----"
+node TestConfigManager.js
+echo "----End\n\n\n\n-----"
+echo "----TestFileWriter.js--------"
+node TestFileWriter.js
+echo "----End\n\n\n\n-----"
+echo "----TestScheduler.js--------"
+node TestScheduler.js
+echo "----End\n\n\n\n-----"

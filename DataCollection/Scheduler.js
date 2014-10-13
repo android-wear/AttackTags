@@ -1,33 +1,33 @@
-// Set up twitter login credentials.
-var Scheduler = function Scheduler(twitterCrawler, callbacks) {
+var Scheduler = function Scheduler(crawler, callbacks) {
     this.callbacks = callbacks;
-    this.twitterCrawler = twitterCrawler;
-    this.twitterCrawler.setMaxListeners(10);
+    this.crawler = crawler;
+    this.crawler.setMaxListeners(10);
 }
 
 var content = [];
-var runOnce = function (twitterCrawler, callbacks) {
-    twitterCrawler.on('data', function(screenName, data) {
+var runOnce = function (crawler, callbacks) {
+    crawler.on('data', function(screenName, data) {
         content.push(data);
 	});
-    twitterCrawler.on('done', function(counts) {
+    crawler.on('done', function(counts) {
     	if (!callbacks) {
             return;
 		}
-    	console.log("processed names: " + counts);
+    	console.log("processed " + counts + ".");
         for (var i=0; i < callbacks.length; ++i) {
-            // process tweets with callback function.
             callbacks[i](content);
         }
-        twitterCrawler.removeAllListeners('data');
-        twitterCrawler.removeAllListeners('done');
+        crawler.removeAllListeners('data');
+        crawler.removeAllListeners('done');
         content = [];
     });
-    twitterCrawler.crawl();
+    crawler.crawl();
 }
 
 Scheduler.prototype.start = function (runningInterval) {
-    return setInterval(runOnce, runningInterval, this.twitterCrawler, this.callbacks);
+    runOnce(this.crawler, this.callbacks);
+    // Schedule the rest.
+    return setInterval(runOnce, runningInterval, this.crawler, this.callbacks);
 }
 
 Scheduler.prototype.stop = function (id) {
