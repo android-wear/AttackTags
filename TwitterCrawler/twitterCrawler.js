@@ -1,18 +1,6 @@
 var util = require('util'),
     twitterModule = require('twitter'),
     EventEmitter = require('events').EventEmitter;
-/*
-var twit = new twitter({
-    consumer_key: 'Sf2w36x3LVCcD5T5POEzny6zl',
-    consumer_secret: 'ZqGqFO5Hv2onOPkXOdpLqk4bu2CsFAAWXVWALBxAjDX0VZJW80',
-    access_token_key: '22407058-heCtmNOiTym1yqADH0Vzg0kbBbBkuThfNsLkpPnBu',
-    access_token_secret: 'NgfLW4RAXJCKEU8Jbrf3dutCy458Q0lLI50RxPMgMXHJS'
-});
-
-twit.login();
-*/
-
-var maxSupportedTweetsCount = 5;
 
 // Emits 'error' event through this.validate(). 
 // Emits 'data' event through this.crawlOneUser().
@@ -35,11 +23,6 @@ Crawler.prototype.validate = function() {
     		isNaN(this.tweetsCount)) {    	
 		this.emit('error', new Error(
 		    "twitterAuth or screenName or tweetsCount are null."));
-		return false;
-    }
-    if (this.tweetsCount > maxSupportedTweetsCount) {
-		this.emit('error', new Error(
-		    "tweetsCount is larger than " + maxSupportedTweetsCount));
 		return false;
     }
     return true;

@@ -8,7 +8,7 @@
   "production": {
     "maxTweetsPerCrawl": 5,
     "runningIntervalInMs": 300000,
-    "logRootPath": "~/logs/twitterLogs",
+    "logRootPath": "/tmp/twitterLogs/",
     "totalRounds": 10    
   }
 }
