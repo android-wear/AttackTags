@@ -1,0 +1,1 @@
+sudo NODE_ENV=production forever start -w bin/www
