@@ -7,7 +7,7 @@
   },
   "production": {
     "maxTweetsPerCrawl": 5,
-    "runningIntervalInMs": 3600000,
+    "runningIntervalInMs": 14400000,
     "logRootPath": "/home/ubuntu/logs/twitter/",
     "totalRounds": 10    
   }
