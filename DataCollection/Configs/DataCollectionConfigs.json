@@ -1,9 +1,9 @@
 {
   "development": {
-    "maxTweetsPerCrawl": 5,
+    "maxTweetsPerCrawl": 1,
     "runningIntervalInMs": 5000,
     "logRootPath": "/tmp/twitterTestLogs/",
-    "totalRounds": 3
+    "totalRounds": 1
   },
   "production": {
     "maxTweetsPerCrawl": 5,
