@@ -1,9 +1,9 @@
 {
   "development": {
-    "maxTweetsPerCrawl": 1,
+    "maxTweetsPerCrawl": 2,
     "runningIntervalInMs": 5000,
-    "logRootPath": "/tmp/twitterTestLogs/",
-    "totalRounds": 1
+    "logRootPath": "/home/yang/logs/twitterTestLogs/",
+    "totalRounds": 0
   },
   "production": {
     "maxTweetsPerCrawl": 5,

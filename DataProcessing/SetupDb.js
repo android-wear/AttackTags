@@ -4,16 +4,11 @@
 // 
 // To verify, run "neo4j-shell" from command line, then type "schema".
 var neo4j = require('node-neo4j');
-/*
 var db = new neo4j(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
     'http://localhost:7474'
 );
-*/
-var db = new neo4j(
-                   'http://localhost:7474'
-               );
 
 var assert = require('assert');
 
@@ -34,4 +29,5 @@ var setupNodeWithConstraint = function (db, node, property) {
 setupNodeWithConstraint(db, "Tweet", "id");
 setupNodeWithConstraint(db, "User", "screen_name");
 setupNodeWithConstraint(db, "Hashtag", "name");
-
+setupNodeWithConstraint(db, "Link", "url");
+setupNodeWithConstraint(db, "Source", "name");
