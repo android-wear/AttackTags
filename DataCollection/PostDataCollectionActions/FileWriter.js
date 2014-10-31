@@ -31,8 +31,7 @@ var write = function write (root, fileExtension, data) {
     } else {
         var fileName = getFileName(root, fileExtension);
         console.log("writing data to: " + fileName);
-        console.log("data: " + data[0] + " " + data[1] + " " + data[2]);
-        fs.writeFileSync(fileName, data, 'ascii');
+        fs.writeFileSync(fileName, data, 'utf8');
         return fileName;
     }
 }
