@@ -6,3 +6,6 @@ sudo apt-get update
 sudo apt-get install neo4j
 # verify neo4j is running
 service neo4j-service status
+# Then modify /etc/neo4j/neo4j-server.properties
+# Follow http://neo4j.com/docs/stable/security-server.html
+# then run "service neo4j-service restart"

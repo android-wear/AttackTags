@@ -1,0 +1,12 @@
+{
+  "development": {
+    "runningIntervalInMs": 5000,
+    "logRootPath": "/home/yang/logs/twitterTestLogs/",
+    "neo4jConnectionString": "http://localhost:7474"
+  },
+  "production": {
+    "runningIntervalInMs": 14400000,
+    "logRootPath": "/home/ubuntu/logs/twitter/",
+    "neo4jConnectionString": "http://localhost:7474"
+  }
+}

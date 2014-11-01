@@ -1,10 +1,9 @@
+var env = process.env['NODE_ENV'] || 'development';
+var config = require('./Configs/DataProcessingConfigs.json');
 var neo4j = require('node-neo4j');
-var db = new neo4j(
-    process.env['NEO4J_URL'] ||
-    process.env['GRAPHENEDB_URL'] ||
-    'http://localhost:7474'
-);
-var tweets = require('/home/yang/logs/twitterTestLogs/2014_9_30_5_50_623_176.json');
+var db = new neo4j(config[env].neo4jConnectionString);
+//var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
+var fs = require('fs');
 var query = 
 ['UNWIND {tweets} AS t',
  '   WITH t',
@@ -50,14 +49,22 @@ var query =
  '      MERGE (tweet)-[:RETWEETS]->(retweet_tweet)',
  '  )'].join("\n");
 
-tweets.forEach(function(tweetCollection) {
-    var tweet = {tweets: tweetCollection};
-    
-    db.cypherQuery(query, tweet, function(err, res) {
-        if (err) {
-            console.log("err!");
-            console.log(err);
-        }
-        console.log(res);
-    });    
-});
+var root = config[env].logRootPath;
+fs.readdirSync(root).forEach(function(fileName) {
+    if (fileName.indexOf(".json", fileName.length - ".json".length) != -1){
+        console.log("Processing + " + root + fileName);
+        require(root + fileName).forEach(function(tweetCollection) {
+            var tweetsForOneUser = {tweets: tweetCollection};
+            try {
+                db.cypherQuery(query, tweetsForOneUser, function(err, res) {
+                    if (err) {
+                        console.log("err!");
+                        console.log(err);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    }
+  });
