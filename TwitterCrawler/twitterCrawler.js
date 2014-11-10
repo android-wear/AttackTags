@@ -5,12 +5,24 @@ var util = require('util'),
 // Emits 'error' event through this.validate(). 
 // Emits 'data' event through this.crawlOneUser().
 // Emits 'done' event when all tweets have been crawled.
-var Crawler = function Crawler(twitterModule, screenNames, tweetsCount) {	
+// tweetsPerUser: number of tweets to crawl per user.
+// maxTweetsToCrawl: max number of tweets to crawl. See
+// https://dev.twitter.com/rest/public/rate-limiting for details.
+var Crawler = function Crawler(twitterModule, 
+                               screenNames, 
+                               tweetsPerUser, 
+                               maxTweetsToCrawl) {    
     this.twitterModule = twitterModule;
     this.screenNames = screenNames;
-    this.tweetsCount = tweetsCount;
-    this.processed = 0;
-    this.maxToProcess = screenNames ? screenNames.length : 0;
+    this.totalUserCount = screenNames ? screenNames.length : 0;    
+    this.tweetsPerUser = tweetsPerUser;
+    this.maxTweetsToCrawl = 
+        maxTweetsToCrawl ?
+            Math.min(maxTweetsToCrawl, 
+                     tweetsPerUser * this.totalUserCount) :0;
+    this.unprocessedUserCount = 0;
+    this.processedTweetCount = 0;    
+    this.lastCrawledUserIndex = 0;
     // Register for event handling.
     EventEmitter.call(this);
 }
@@ -19,10 +31,10 @@ var Crawler = function Crawler(twitterModule, screenNames, tweetsCount) {
 util.inherits(Crawler, EventEmitter);
 
 Crawler.prototype.validate = function() {
-    if (!this.twitterModule || !this.screenNames || !this.tweetsCount || 
-    		isNaN(this.tweetsCount)) {    	
+    if (!this.twitterModule || !this.screenNames || !this.tweetsPerUser || 
+    		isNaN(this.tweetsPerUser)) {    	
 		this.emit('error', new Error(
-		    "twitterAuth or screenName or tweetsCount are null."));
+		    "twitterAuth or screenName or tweetsPerUser are null."));
 		return false;
     }
     return true;
@@ -30,9 +42,10 @@ Crawler.prototype.validate = function() {
 
 // Crawl data from user (a.k.a. screenName) home page.
 // Emit 'data' event with screenName and data.
-var crawlOneUser = function(twitterModule, screenName, tweetsCount, crawler) {
+var crawlOneUser = function(twitterModule, screenName, tweetsPerUser, crawler) {
+    console.log("crawling " + screenName);
 	twitterModule.getUserTimeline(
-		{screen_name:screenName, count:tweetsCount}, 
+		{screen_name:screenName, count:tweetsPerUser}, 
 		function(data) {
 		    crawler.processTweet(screenName, data);
 		});
@@ -43,10 +56,9 @@ Crawler.prototype.processTweet = function(screenName, data) {
     	return;
     }
     this.emit('data', screenName, data);
-    ++this.processed;
-    if (this.processed == this.maxToProcess) {
-        this.processed = 0;
-    	this.emit('done', this.maxToProcess);
+    --this.unprocessedUserCount;
+    if (this.unprocessedUserCount == 0) {
+    	this.emit('done', this.processedTweetCount);
     }
 }
 
@@ -56,9 +68,23 @@ Crawler.prototype.crawl = function() {
     	return;
     }
     this.twitterModule.login();
-    for (var i=0; i<this.screenNames.length; ++i) {
-    	crawlOneUser(this.twitterModule, this.screenNames[i], this.tweetsCount, this);
+    var i = this.lastCrawledUserIndex;
+    this.processedTweetCount = 0;
+    this.unprocessedUserCount = 0;
+    while (this.processedTweetCount + this.tweetsPerUser 
+               <= this.maxTweetsToCrawl) {
+        ++this.unprocessedUserCount;
+        this.processedTweetCount += this.tweetsPerUser;
+        crawlOneUser(
+            this.twitterModule,
+            this.screenNames[i],
+            this.tweetsPerUser,
+            this);
+        i = (i + 1) % this.totalUserCount;
+        console.log("i: " + i);
+        console.log("total: " + this.totalUserCount);
     }
+    this.lastCrawledUserIndex = i;
 }
 
 // Twitter initializes a twitter module with auth tokens.

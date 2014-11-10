@@ -3,18 +3,20 @@ var MockTwitterModule = require('../../TwitterCrawler/Test/mockTwitterModule.js'
 var Scheduler = require ('../Scheduler.js');
 var assert = require('assert');
 
-var testTweet = "testtest";
-var mockTwitterModule = new MockTwitterModule(testTweet, 1000);
+var testTweets = ["test tweet 1", "test tweet 2"];
+var mockTwitterModule = new MockTwitterModule(testTweets, 1000);
+var testUserList = ["DmitriCyber", "YANGSHA", "TestUser3", "TestUser4"];
+var perUserTweetCrawlingCount = 2;
+var maxTweetsToCrawl = 2;
 var testTwitterCrawler = new twitter.TwitterCrawler(
-    mockTwitterModule, ["DmitriCyber", "YANGSHA"], 2);
+    mockTwitterModule, testUserList, perUserTweetCrawlingCount,
+    maxTweetsToCrawl);
 
-var totalRunningTimes = 0;
+var totalRounds = 0;
 var verify = function(content) {
-    assert.equal(content.length, 2, "Should only return one tweet.");
-    content.forEach(function(data) {
-        assert.equal(data, testTweet, "Tweet should be equal to " + testTweet);
-    });
-    ++totalRunningTimes;
+    assert.equal(content[0], testTweets,
+                 content[0] + " not equal to " + testTweets);
+    ++totalRounds;
     console.log("------PASSED--------");
 }
 
@@ -24,13 +26,16 @@ var scheduler = new Scheduler(testTwitterCrawler, callbacks);
 
 var finishRunAndVerify = function (scheduler, 
                                    id, 
-                                   expectedRunningTimes) {
+                                   expectedRounds) {    
     scheduler.stop(id);
-    assert.equal(totalRunningTimes, expectedRunningTimes, 
-                 "actual: " + totalRunningTimes + " expected: " + expectedRunningTimes);
+    assert.equal(totalRounds, expectedRounds, 
+                 "actually ran " + totalRounds + 
+                 " times, not equals to the expected " + expectedRounds +
+                 " times.");
 }
-var runningIntervalInMs = 500;
-var expectedRunningTimes = 3;
+var runningIntervalInMs = 5000;
+var expectedRounds = 1;
 var id = scheduler.start(runningIntervalInMs);
-setTimeout(finishRunAndVerify, runningIntervalInMs * expectedRunningTimes, scheduler, id,
-           expectedRunningTimes);
+
+setTimeout(finishRunAndVerify, runningIntervalInMs * expectedRounds, 
+           scheduler, id, expectedRounds);

@@ -1,14 +1,16 @@
 {
   "development": {
-    "maxTweetsPerCrawl": 2,
+    "perUserTweetsCount": 2,
     "runningIntervalInMs": 5000,
     "logRootPath": "/home/yang/logs/twitterTestLogs/",
-    "totalRounds": 0
+    "totalRounds": 1,
+    "twitterCrawlingRateLimit": 2
   },
   "production": {
-    "maxTweetsPerCrawl": 5,
-    "runningIntervalInMs": 14400000,
+    "perUserTweetsCount": 5,
+    "runningIntervalInMs": 1200000,
     "logRootPath": "/home/ubuntu/logs/twitter/",
-    "totalRounds": 10    
+    "totalRounds": 1000,
+    "twitterCrawlingRateLimit": 140
   }
 }

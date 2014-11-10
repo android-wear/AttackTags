@@ -43,7 +43,8 @@ twitterApi.on('error', function(err) {
 var twitterCrawler = new Twitter.TwitterCrawler(
     twitterApi.withAuthToken(twitterAuthToken),
     getScreenNames(configManager.getTwitterUserList(env)),
-    runnerConfigs.maxTweetsPerCrawl);
+    runnerConfigs.perUserTweetsCount,
+    runnerConfigs.twitterCrawlingRateLimit);
 twitterCrawler.on('error', function(err) {
     console.log(err);
 });
@@ -59,12 +60,14 @@ var jsonFileWriterCallback = function(data) {
 var callbacks = [];
 callbacks.push(jsonFileWriterCallback);
 var scheduler = new Scheduler(twitterCrawler, callbacks);
+var id = scheduler.start(runnerConfigs.runningIntervalInMs);
+/*
 var finishRunAndVerify = function (scheduler, id) {
     scheduler.stop(id);
     var date = new Date();
     console.log("Completed this round at " + date.toDateString());
 }
-var id = scheduler.start(runnerConfigs.runningIntervalInMs);
 setTimeout(finishRunAndVerify, 
            runnerConfigs.runningIntervalInMs * runnerConfigs.totalRounds, 
            scheduler, id);
+*/

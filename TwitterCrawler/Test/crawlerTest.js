@@ -6,48 +6,45 @@ var testAuth = new TwitterAuth(
     'ZqGqFO5Hv2onOPkXOdpLqk4bu2CsFAAWXVWALBxAjDX0VZJW80',
     '22407058-heCtmNOiTym1yqADH0Vzg0kbBbBkuThfNsLkpPnBu',
     'NgfLW4RAXJCKEU8Jbrf3dutCy458Q0lLI50RxPMgMXHJS');
+var assert = require('assert');
 
 // Verify the TwitterApi.
 var testTwitterApi = new twitter.TwitterApi();
-
 testTwitterApi.on('error', function(err){
     console.log("Failed to get twitter api.");
     process.exit(1);
 });
 testTwitterApi.withAuthToken(testAuth);
 
-// Use the mock twitter api (a.k.a. MockTwitterApi) to verify the TwitterCrawler.
-var verifyTwitterCrawler = function(screenNames, count) {
-    var testTweet = "testtest";
-    var mockTwitterModule = new MockTwitterModule(testTweet, 1000);
+// Use the mock twitter api (a.k.a. MockTwitterApi) to verify the 
+// TwitterCrawler.
+var verifyTwitterCrawler = function(screenNames,
+                                    testTweet,  // all users share the same test tweets
+                                    maxTweetsToCrawl,
+                                    expectedCrawledTweetCount) {
+    var mockTwitterModule = new MockTwitterModule(testTweet, 1);
     var testTwitterCrawler = new twitter.TwitterCrawler(
-    	mockTwitterModule, screenNames, count);
+    	mockTwitterModule, screenNames, 1, maxTweetsToCrawl);
     testTwitterCrawler
     .on('data', function(userName, data) {
-	if (screenNames.indexOf(userName) == -1 ) {
-	    console.log("Unexpected user: " + name + " not in " +
-			screenNames);
-	    process.exit(1);
-        }
-	if (data != testTweet) {
-	    console.log("Fetched tweet: " + data + " not equal to expected: " +
-			testTweet);
-	    process.exit(1);
-        }
+        assert.notEqual(screenNames.indexOf(userName), -1,
+                        "Unexpected user: " + userName);
+        assert.deepEqual(data,
+                         testTweet,
+                         data + " not equals to " + testTweet);
     });
     testTwitterCrawler.on('done', function(actualCount) {
-	if (actualCount != count) {
-	    console.log(
-		"actual screened: " + actualCount + 
-		" not equal to expected: " + count);
-	    process.exit(1);
-	} else {
-	    console.log("----------PASSED---------");
-	}
+        assert.equal(actualCount,
+                     expectedCrawledTweetCount, 
+                     "crawled " + actualCount + " tweets, not equal" + 
+                     " to " + expectedCrawledTweetCount);
     });
     testTwitterCrawler.crawl();
 }
 
 // Verify crawler crawled all the users.
-verifyTwitterCrawler(["DmitriCyber"], 1);
-verifyTwitterCrawler(["testUser1", "testUser2", "testUser3"], 3);
+verifyTwitterCrawler(["DmitriCyber"], "testtesttweet", 10, 1);
+verifyTwitterCrawler(["testUser1", "testUser2", "testUser3"], 
+                     "testtweet", 30, 3);
+verifyTwitterCrawler(["testUser1", "testUser2", "testUser3", "user4"], 
+                     "testtweet", 2, 2);

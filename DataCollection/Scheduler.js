@@ -26,8 +26,10 @@ var runOnce = function (crawler, callbacks) {
 
 Scheduler.prototype.start = function (runningInterval) {
     runOnce(this.crawler, this.callbacks);
-    // Schedule the rest.
-    return setInterval(runOnce, runningInterval, this.crawler, this.callbacks);
+    return setInterval(runOnce,
+                       runningInterval,
+                       this.crawler,
+                       this.callbacks);
 }
 
 Scheduler.prototype.stop = function (id) {
