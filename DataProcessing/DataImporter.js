@@ -1,9 +1,11 @@
 var env = process.env['NODE_ENV'] || 'development';
+console.log(env);
 var config = require('./Configs/DataProcessingConfigs.json');
 var neo4j = require('node-neo4j');
 var db = new neo4j(config[env].neo4jConnectionString);
 //var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
 var fs = require('fs');
+var dataImportUtil = require('./DataImportUtil');
 var query = 
 ['UNWIND {tweets} AS t',
  '   WITH t',
@@ -50,21 +52,26 @@ var query =
  '  )'].join("\n");
 
 var root = config[env].logRootPath;
-fs.readdirSync(root).forEach(function(fileName) {
-    if (fileName.indexOf(".json", fileName.length - ".json".length) != -1){
-        console.log("Processing + " + root + fileName);
-        require(root + fileName).forEach(function(tweetCollection) {
-            var tweetsForOneUser = {tweets: tweetCollection};
-            try {
+var fileNames = fs.readdirSync(root);
+var fileToBeProcessed = fileNames[0];
+if (fileToBeProcessed.indexOf(".json", fileToBeProcessed.length - ".json".length) != -1){
+    console.log("Processing + " + root + fileToBeProcessed);
+    try {
+        require(root + fileToBeProcessed).forEach(function(tweetCollection) {
+            dataImportUtil.processTweets(db, tweetCollection, 'Tweet');
+            dataImportUtil.event.on("data", function(tweetsForOneUser) {
+                console.log(tweetsForOneUser);
                 db.cypherQuery(query, tweetsForOneUser, function(err, res) {
                     if (err) {
                         console.log("err!");
                         console.log(err);
                     }
                 });
-            } catch (e) {
-                console.log(e);
-            }
+            });
         });
+        fs.renameSync(root + fileToBeProcessed, 
+                      root + "Processed/" + fileToBeProcessed.replace(".json", ".done"));
+    } catch (e) {
+        console.log(e);
     }
-  });
+}
