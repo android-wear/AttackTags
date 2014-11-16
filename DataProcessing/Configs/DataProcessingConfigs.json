@@ -1,12 +1,16 @@
 {
   "development": {
-    "runningIntervalInMs": 5000,
+    "runningIntervalInMs": 50000,
     "logRootPath": "/home/yang/logs/twitterTestLogs/",
-    "neo4jConnectionString": "http://localhost:7474"
+    "neo4jConnectionString": "http://localhost:7474",
+    "cleanUpFileAfterProcessing": true,
+    "maxEventListenerCount": 500
   },
   "production": {
-    "runningIntervalInMs": 14400000,
+    "runningIntervalInMs": 1200000,
     "logRootPath": "/home/ubuntu/logs/twitter/",
-    "neo4jConnectionString": "http://localhost:7474"
+    "neo4jConnectionString": "http://localhost:7474",
+    "cleanUpFileAfterProcessing": true,
+    "maxEventListenerCount": 500
   }
 }

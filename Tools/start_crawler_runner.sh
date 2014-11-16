@@ -1,1 +1,0 @@
-sudo NODE_ENV=production forever start -w ~/Offline/AttackTags/DataCollection/Runner.js

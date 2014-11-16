@@ -6,6 +6,7 @@ var db = new neo4j(config[env].neo4jConnectionString);
 //var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
 var fs = require('fs');
 var dataImportUtil = require('./DataImportUtil');
+var async = require('async');
 var query = 
 ['UNWIND {tweets} AS t',
  '   WITH t',
@@ -51,27 +52,70 @@ var query =
  '      MERGE (tweet)-[:RETWEETS]->(retweet_tweet)',
  '  )'].join("\n");
 
-var root = config[env].logRootPath;
-var fileNames = fs.readdirSync(root);
-var fileToBeProcessed = fileNames[0];
-if (fileToBeProcessed.indexOf(".json", fileToBeProcessed.length - ".json".length) != -1){
-    console.log("Processing + " + root + fileToBeProcessed);
+function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
+    if (fileToBeProcessed
+        .indexOf(".json", fileToBeProcessed.length - ".json".length) == -1) {
+        console.log("wrong file");
+        return;
+    }
+    console.log("Processing + " + fileToBeProcessed);
     try {
-        require(root + fileToBeProcessed).forEach(function(tweetCollection) {
-            dataImportUtil.processTweets(db, tweetCollection, 'Tweet');
+        var logs = require(fileToBeProcessed);
+        async.each(logs, function(item, done) {
+            dataImportUtil.processTweets(db, item, 'Tweet');
             dataImportUtil.event.on("data", function(tweetsForOneUser) {
-                console.log(tweetsForOneUser);
-                db.cypherQuery(query, tweetsForOneUser, function(err, res) {
-                    if (err) {
-                        console.log("err!");
-                        console.log(err);
-                    }
-                });
+                if (tweetsForOneUser) {
+                    db.cypherQuery(query, tweetsForOneUser, function(err, res) {
+                        if (err) {
+                            console.log("err!");
+                            console.log(err);
+                            return done(null);
+                        }
+                    });
+                }
             });
+            return done();
+        }, function(err) {
+            if (err) console.log(err);
+            if (cleanup) {
+                console.log("mv " + fileToBeProcessed);
+                fs.renameSync(
+                    fileToBeProcessed,
+                    cleanupFileName);
+            }
+            console.log("Done processing: " + fileToBeProcessed);
         });
-        fs.renameSync(root + fileToBeProcessed, 
-                      root + "Processed/" + fileToBeProcessed.replace(".json", ".done"));
     } catch (e) {
         console.log(e);
     }
 }
+
+var run = function run(root) {
+    console.log("Start runner... ");
+    var fileNames = fs.readdirSync(root);
+    var fileToBeProcessed = '';
+    for (var i = 0; i < fileNames.length; ++i) {
+        if (fs.lstatSync(root + fileNames[i]).isDirectory()) {
+            console.log("Skipping dir.");
+            continue;
+        }
+        if (fileNames[i].indexOf(".json", fileToBeProcessed.length - ".json".length) 
+                != -1) {
+            fileToBeProcessed = fileNames[i];
+            break;
+        }
+    }
+    if (fileToBeProcessed) {
+        processFile(
+            root + fileToBeProcessed,
+            root + "Processed/" + fileToBeProcessed.replace(".json", ".done"),
+            config[env].cleanUpFileAfterProcessing);
+    }
+}
+var root = config[env].logRootPath;
+// Set listerner count.
+dataImportUtil.event.setMaxListeners(config[env].maxEventListenerCount);
+run(root);
+setInterval(run,
+            config[env].runningIntervalInMs,
+            root);
