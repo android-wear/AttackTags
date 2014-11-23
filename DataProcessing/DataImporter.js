@@ -5,7 +5,7 @@ var neo4j = require('node-neo4j');
 var db = new neo4j(config[env].neo4jConnectionString);
 //var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
 var fs = require('fs');
-var dataImportUtil = require('./DataImportUtil');
+var DataImportUtil = require('./DataImportUtil');
 var async = require('async');
 var query = 
 ['UNWIND {tweets} AS t',
@@ -55,19 +55,38 @@ var query =
 function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
     if (fileToBeProcessed
         .indexOf(".json", fileToBeProcessed.length - ".json".length) == -1) {
-        console.log("wrong file");
+        console.log(fileToBeProcessed + " is not a json file.");
         return;
     }
     console.log("Processing + " + fileToBeProcessed);
     try {
         var logs = require(fileToBeProcessed);
         async.each(logs, function(item, done) {
-            dataImportUtil.processTweets(db, item, 'Tweet');
-            dataImportUtil.event.on("data", function(tweetsForOneUser) {
+            var dataImportUtil = 
+                new DataImportUtil(db, item.length, config[env]);
+            dataImportUtil.setMaxListeners(config[env].maxEventListenerCount);
+            dataImportUtil.processTweetsForOneUser(item, 'Tweet');
+            dataImportUtil.on("data", function(tweetsForOneUser) {
+                dataImportUtil.removeAllListeners('data');
                 if (tweetsForOneUser) {
+                    if (config[env].enableDebugLogging == true) {
+                        tweetsForOneUser["tweets"].forEach(function(data) {
+                            console.log("Got data event. Writing " + 
+                                        data.user.screen_name + 
+                                        ", tweet: " + data.id); 
+                         });
+                    }
                     db.cypherQuery(query, tweetsForOneUser, function(err, res) {
+                        if (config[env].enableDebugLogging == true) {                        
+                            tweetsForOneUser["tweets"].forEach(function(data) {
+                                console.log("Writing to db: " + 
+                                            data.user.screen_name +
+                                            ", tweet: " + data.id); 
+                             });
+                        }
                         if (err) {
                             console.log("err!");
+                            console.log(fileToBeProcessed);
                             console.log(err);
                             return done(null);
                         }
@@ -76,14 +95,27 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
             });
             return done();
         }, function(err) {
-            if (err) console.log(err);
-            if (cleanup) {
-                console.log("mv " + fileToBeProcessed);
+            if (cleanup && !err) {
+                console.log("moved to " + cleanupFileName);
                 fs.renameSync(
                     fileToBeProcessed,
                     cleanupFileName);
+                console.log("Done processing: " + 
+                            fileToBeProcessed);
             }
-            console.log("Done processing: " + fileToBeProcessed);
+            if (err) {
+                console.log("Processing error: " + err);
+                console.log(cleanupFileName);
+                fs.exists(cleanupFileName, function(exists) {
+                    if (exists) {
+                        console.log("Moving file: " +
+                                    cleanupFileName + " back to " +
+                                    fileToBeProcessed);
+                        fs.renameSync(
+                            cleanupFileName, fileToBeProcessed);                        
+                    }
+                });
+            }
         });
     } catch (e) {
         console.log(e);
@@ -108,13 +140,16 @@ var run = function run(root) {
     if (fileToBeProcessed) {
         processFile(
             root + fileToBeProcessed,
-            root + "Processed/" + fileToBeProcessed.replace(".json", ".done"),
+            root + "Processed/" + fileToBeProcessed,
             config[env].cleanUpFileAfterProcessing);
+    } else {
+        console.log("Folder is empty. No file to process.");
     }
 }
+
 var root = config[env].logRootPath;
 // Set listerner count.
-dataImportUtil.event.setMaxListeners(config[env].maxEventListenerCount);
+//dataImportUtil.event.setMaxListeners(config[env].maxEventListenerCount);
 run(root);
 setInterval(run,
             config[env].runningIntervalInMs,
