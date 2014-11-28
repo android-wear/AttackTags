@@ -1,9 +1,23 @@
 #!/usr/bin/env node
 var debug = require('debug')('ApiServer');
 var app = require('../app');
+// Set env through "NODE_ENV=production node bin/www",
+// or "NODE_ENV=development node bin/www".
+var env = 
+    app.get('env') == 'production' || app.get('env') == 'development' ?
+        app.get('env') : 'development';
+console.log('environment is: ' + env);
+// Get ports and other configs from config.json.
+var config = require('../config.json')[env]; 
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', Number(config.port) || 3000);
+console.log('listening to port: ' + app.get('port'));
 
+try{
 var server = app.listen(app.get('port'), function() {
+  console.log('listening: ' + server.address().port);
   debug('Express server listening on port ' + server.address().port);
 });
+} catch (err) {
+    console.log(err);
+}
