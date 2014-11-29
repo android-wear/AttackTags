@@ -10,7 +10,6 @@ var maxQueryResultLimit = 20;
 var defaultQueryResultLimit = 5;
 
 // private constructor:
-
 var Tweet = module.exports = function Tweet(tweet) {
     // all we'll really store is the node; the rest of our properties will be
     // derivable or just pass-through properties (see below).
@@ -56,6 +55,7 @@ Tweet.getTopNByKeywords = function (keywords, n, callback) {
     if (!query) {
         return callback("Cannot generte a query from keywords: " + keywords);
     }
+    console.log(query);
     db.cypherQuery(query, function(err, result) {
         if (err) {
             return callback(err);
@@ -64,6 +64,9 @@ Tweet.getTopNByKeywords = function (keywords, n, callback) {
     })
 };
 
+// Sample query:
+// match (n:Tweet) where n.text=~'.*(?i)shell.*' and 
+// n.text=~'.*(?i)vu.*'return n order by n.id DESC limit 3;
 Tweet.getSearchByKeywordsQuery = function (keywords, limit) {
     if (!keywords) {
         return null;
@@ -72,7 +75,8 @@ Tweet.getSearchByKeywordsQuery = function (keywords, limit) {
     var query = "match (n:Tweet) where";
     var len = searchKeywords.length;
     for (var i = 0; i < len; ++i) {
-        query += " n.text=~'.*" + searchKeywords[i] + ".*'";
+        // Use (?i) to create a case insensitive query.
+        query += " n.text=~'.*(?i)" + searchKeywords[i] + ".*'";
         if (i != len - 1) {
             query += " and";
         }

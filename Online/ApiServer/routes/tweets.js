@@ -20,11 +20,8 @@ module.exports = router;
  * /tweets/simple?q=shellshock+phone&n=5
  */
 router.get('/simple', function(req, res, next){
-    var keywords = req.param("q").split("+");
     var n = req.param("n");
-    console.log(keywords);
-    console.log(n);
-    Tweet.getTopNByKeywords(keywords, n, function(err, tweet){
+    Tweet.getTopNByKeywords(req.param("q").split(" "), n, function(err, tweet){
         if(err) {
             next(err);
         }

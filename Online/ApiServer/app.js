@@ -27,6 +27,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/tweets', tweets);
 app.use('/tweet', tweets);
+app.use('/search', tweets);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
