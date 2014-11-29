@@ -10,4 +10,8 @@ assert.equal(
     "match (n:Tweet) where n.text=~'.*(?i)privacy.*'" + 
     " return n order by n.id DESC limit 3;");
 
+assert.equal(
+    Tweet.whereClauseWithKeywords(["privacy", "phone"]),
+    "n.text=~'.*(?i)privacy.*' and n.text=~'.*(?i)phone.*'");
+
 console.log("==========PASSED===============");

@@ -41,7 +41,7 @@ Object.defineProperty(Tweet.prototype, "favorites", {
 // static methods:
 
 Tweet.getTopNByKeywords = function (keywords, n, callback) {
-    if (!keywords) {
+    if (!keywords || keywords.length == 0 || !keywords[0]) {
         return callback(new Error("Keywords are null or empty."));
     }
     if (!n) {
@@ -55,14 +55,37 @@ Tweet.getTopNByKeywords = function (keywords, n, callback) {
     if (!query) {
         return callback(new Error("Cannot generte a query from keywords: " + keywords));
     }
+    db.cypherQuery(query, function(err, result) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, new Tweet(result.data));
+    });
+};
+
+// Sample query:
+// MATCH ()-[r:RETWEETS]->(n) 
+// WHERE n.text=~'.*keyword.*'
+// WITH n, count(r) as rel_cnt order by rel_cnt DESC
+// WHERE rel_cnt > = 3
+// RETURN n limit 1;
+Tweet.getTopRetweetedWithKeywords = function (keywords, reTweetedCount, callback) {
+    if (!keywords || keywords.length == 0 || !keywords[0]) {
+        return callback(new Error("Keywords are null or empty."));
+    }
+    if (!reTweetedCount) {
+        reTweetedCount = 1;
+    }
+    var query = 
+        Tweet.getTopRetweetCountAndFilterByKeywordQuery(keywords, reTweetedCount);
     console.log(query);
     db.cypherQuery(query, function(err, result) {
         if (err) {
             return callback(err);
         }
-        callback(null, result.data);
-    })
-};
+        callback(null, result);
+    });
+}
 
 // Sample query:
 // match (n:Tweet) where n.text=~'.*(?i)shell.*' and 
@@ -72,15 +95,40 @@ Tweet.getSearchByKeywordsQuery = function (keywords, limit) {
         return null;
     }
     var searchKeywords = [].concat(keywords);
-    var query = "match (n:Tweet) where";
+    var query = 
+        "match (n:Tweet) where " + 
+        Tweet.whereClauseWithKeywords(searchKeywords);
+    query += " return n order by n.id DESC limit " + limit + ";";
+    return query;
+}
+
+Tweet.getTopRetweetCountAndFilterByKeywordQuery = function (keywords, reTweetedCount) {
+    if (!keywords) {
+        return null;
+    }
+    var searchKeywords = [].concat(keywords);
+    var query = 
+        "MATCH ()-[r:RETWEETS]->(n) where " +
+        Tweet.whereClauseWithKeywords(searchKeywords) +
+        " WITH n, count(r) as rel_cnt order by rel_cnt DESC" +
+        " WHERE rel_cnt >= " + reTweetedCount + 
+        " RETURN rel_cnt as retweetCount, n as tweet limit 1;";
+    return query;
+}
+
+Tweet.whereClauseWithKeywords = function (keywords) {
+    if (!keywords) {
+        return null;
+    }
+    var searchKeywords = [].concat(keywords);
+    var query = "";
     var len = searchKeywords.length;
     for (var i = 0; i < len; ++i) {
         // Use (?i) to create a case insensitive query.
-        query += " n.text=~'.*(?i)" + searchKeywords[i] + ".*'";
+        query += "n.text=~'.*(?i)" + searchKeywords[i] + ".*'";
         if (i != len - 1) {
-            query += " and";
+            query += " and ";
         }
     }
-    query += " return n order by n.id DESC limit " + limit + ";";    
     return query;
 }

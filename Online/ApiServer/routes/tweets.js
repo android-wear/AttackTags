@@ -13,11 +13,11 @@ module.exports = router;
 
 /*
  * (single keyword)
- * /tweets/simple?q=shellshock
+ * http://DOMAIN/tweets/simple?q=shellshock
  * (multiple keywords)
- * /tweets/simple?q=shellshock+phone
+ * http://DOMAIN/tweets/simple?q=shellshock+phone
  * (keywords limited to top N)
- * /tweets/simple?q=shellshock+phone&n=5
+ * http://DOMAIN/tweets/simple?q=shellshock+phone&n=5
  */
 router.get('/simple', function(req, res, next){
     var n = req.param("n");
@@ -27,5 +27,17 @@ router.get('/simple', function(req, res, next){
             //next({message: err, status: 200, stack: "tweets.js"});
         }
         res.send(tweet);        
+    });
+});
+
+// Get the hottest tweet with min retweet counts.
+// http://DOMAIN/search/hot?q=shellshock&retweet_min=10
+router.get('/hot', function(req, res, next){
+    var n = req.param("retweet_min");
+    Tweet.getTopRetweetedWithKeywords(req.param("q").split(" "), n, function(err, tweet){
+        if(err) {
+            next(err);
+        }
+        res.send(tweet);
     });
 });
