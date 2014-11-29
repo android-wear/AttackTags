@@ -42,18 +42,18 @@ Object.defineProperty(Tweet.prototype, "favorites", {
 
 Tweet.getTopNByKeywords = function (keywords, n, callback) {
     if (!keywords) {
-        return callback("Searching keywords are null or empty.");
+        return callback(new Error("Keywords are null or empty."));
     }
     if (!n) {
         n = defaultQueryResultLimit;
     }
     if (n > maxQueryResultLimit) {
-        return callback("Can only return 0 to maxQueryResultLimit tweets.");
+        return callback(new Error("n must be smaller than " + maxQueryResultLimit));
     }
     
     var query = Tweet.getSearchByKeywordsQuery(keywords, n);
     if (!query) {
-        return callback("Cannot generte a query from keywords: " + keywords);
+        return callback(new Error("Cannot generte a query from keywords: " + keywords));
     }
     console.log(query);
     db.cypherQuery(query, function(err, result) {

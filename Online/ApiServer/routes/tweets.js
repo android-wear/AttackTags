@@ -24,7 +24,8 @@ router.get('/simple', function(req, res, next){
     Tweet.getTopNByKeywords(req.param("q").split(" "), n, function(err, tweet){
         if(err) {
             next(err);
+            //next({message: err, status: 200, stack: "tweets.js"});
         }
-        res.send(tweet);
+        res.send(tweet);        
     });
 });
