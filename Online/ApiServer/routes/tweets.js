@@ -4,9 +4,11 @@ var Tweet = require('../models/tweet');
 
 /* GET users listing. */
 router.get('/', function(req, res) {
-  res.send("Usage: /tweets/simple?q=shellshock or " + 
-           " /tweets/simple?q=shellshock+phone or " +
-           " /tweets/simple?q=shellshock+phone&n=5");
+  res.send("Usage: /search/simple?q=shellshock or " + 
+           "/search/simple?q=shellshock+phone or " +
+           "/search/simple?q=shellshock+phone&n=5 or " +
+           "/search/hot?q=shellshock&retweet_min=1 or " +
+           "/search/today?n=10");
 });
 
 module.exports = router;
