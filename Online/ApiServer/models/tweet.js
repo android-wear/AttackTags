@@ -140,7 +140,7 @@ Tweet.getLatestNTweetsQuery = function (n) {
         return null;
     }
     return "MATCH (n:Tweet) where n.text is not null return n" + 
-           " order by n.created_at DESC limit " + n + ";";
+           " order by n.id DESC limit " + n + ";";
 }
 
 Tweet.whereClauseWithKeywords = function (keywords) {
