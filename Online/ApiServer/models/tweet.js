@@ -143,7 +143,7 @@ Tweet.getLatestNTweetsQuery = function (n) {
     }
     var query = 
         "MATCH (n:Tweet)-[k:CONTAINS]-(url:Link) where n.text is not null " + 
-        "return n.text,url.url order by n.id DESC limit " + n + ";";
+        "and n.favorites > 0 return n.text,url.url order by n.id DESC limit " + n + ";";
     return query;
 }
 
