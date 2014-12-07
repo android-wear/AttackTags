@@ -16,5 +16,6 @@ assert.equal(
 
 assert.equal(
     Tweet.getLatestNTweetsQuery(3),
-    "MATCH (n:Tweet) where n.text is not null return n order by n.id DESC limit 3;");
+    "MATCH (n:Tweet)-[k:CONTAINS]-(url:Link) where n.text is not null " + 
+    "return n,url order by n.id DESC limit 3;");
 console.log("==========PASSED===============");

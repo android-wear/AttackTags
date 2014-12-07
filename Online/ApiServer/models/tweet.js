@@ -89,6 +89,7 @@ Tweet.getTopRetweetedWithKeywords = function (keywords, reTweetedCount, callback
     });
 }
 
+// Only returns tweets with a link.
 // Sample query:
 // MATCH (n:Tweet) where n.text is not null return n order by n.created_at DESC limit 2;
 Tweet.getLatestNTweets = function (n, callback) {
@@ -134,13 +135,16 @@ Tweet.getTopRetweetCountAndFilterByKeywordQuery = function (keywords, reTweetedC
     return query;
 }
 
-//MATCH (n:Tweet) where n.text is not null return n order by n.created_at DESC limit 2;
+// MATCH (n:Tweet)-[k:CONTAINS]-(url:Link) where n.text is not null 
+// return n,url order by n.id DESC limit 2;
 Tweet.getLatestNTweetsQuery = function (n) {
     if (!n) {
         return null;
     }
-    return "MATCH (n:Tweet) where n.text is not null return n" + 
-           " order by n.id DESC limit " + n + ";";
+    var query = 
+        "MATCH (n:Tweet)-[k:CONTAINS]-(url:Link) where n.text is not null " + 
+        "return n.text,url.url order by n.id DESC limit " + n + ";";
+    return query;
 }
 
 Tweet.whereClauseWithKeywords = function (keywords) {
