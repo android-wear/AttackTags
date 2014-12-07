@@ -43,6 +43,7 @@ router.get('/hot', function(req, res, next){
 });
 
 // Get today's latest N tweets.
+//http://DOMAIN/search/today?n=10.
 router.get('/today', function(req, res, next){
     Tweet.getLatestNTweets(req.param("n"), function(err, tweet){
         if(err) {
