@@ -6,8 +6,8 @@ var db = new neo4j(
     process.env['GRAPHENEDB_URL'] ||
     'http://localhost:7474'
 );
-var maxQueryResultLimit = 20;
-var defaultQueryResultLimit = 5;
+var maxQueryResultLimit = 200;
+var defaultQueryResultLimit = 10;
 
 // private constructor:
 var Tweet = module.exports = function Tweet(tweet) {
@@ -39,7 +39,9 @@ Object.defineProperty(Tweet.prototype, "favorites", {
 });
 
 // static methods:
-
+// Sample query:
+// match (n:Tweet) where n.text=~'.*(?i)privacy.*' and n.text=~'.*(?i)phone.*' 
+// return n order by n.id DESC limit 3;
 Tweet.getTopNByKeywords = function (keywords, n, callback) {
     if (!keywords || keywords.length == 0 || !keywords[0]) {
         return callback(new Error("Keywords are null or empty."));
@@ -59,7 +61,7 @@ Tweet.getTopNByKeywords = function (keywords, n, callback) {
         if (err) {
             return callback(err);
         }
-        callback(null, new Tweet(result.data));
+        callback(null, result.data);
     });
 };
 
@@ -85,6 +87,22 @@ Tweet.getTopRetweetedWithKeywords = function (keywords, reTweetedCount, callback
         }
         callback(null, result);
     });
+}
+
+// Sample query:
+// MATCH (n:Tweet) where n.text is not null return n order by n.created_at DESC limit 2;
+Tweet.getLatestNTweets = function (n, callback) {
+    if (!n) {
+        n = defaultQueryResultLimit;
+    }
+    var query = Tweet.getLatestNTweetsQuery(n);
+    console.log(query);
+    db.cypherQuery(query, function(err, result) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, result.data);
+    });    
 }
 
 // Sample query:
@@ -114,6 +132,15 @@ Tweet.getTopRetweetCountAndFilterByKeywordQuery = function (keywords, reTweetedC
         " WHERE rel_cnt >= " + reTweetedCount + 
         " RETURN rel_cnt as retweetCount, n as tweet limit 1;";
     return query;
+}
+
+//MATCH (n:Tweet) where n.text is not null return n order by n.created_at DESC limit 2;
+Tweet.getLatestNTweetsQuery = function (n) {
+    if (!n) {
+        return null;
+    }
+    return "MATCH (n:Tweet) where n.text is not null return n" + 
+           " order by n.created_at DESC limit " + n + ";";
 }
 
 Tweet.whereClauseWithKeywords = function (keywords) {

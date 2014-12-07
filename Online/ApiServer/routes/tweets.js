@@ -26,7 +26,7 @@ router.get('/simple', function(req, res, next){
             next(err);
             //next({message: err, status: 200, stack: "tweets.js"});
         }
-        res.send(tweet);        
+        res.send(tweet);
     });
 });
 
@@ -35,6 +35,16 @@ router.get('/simple', function(req, res, next){
 router.get('/hot', function(req, res, next){
     var n = req.param("retweet_min");
     Tweet.getTopRetweetedWithKeywords(req.param("q").split(" "), n, function(err, tweet){
+        if(err) {
+            next(err);
+        }
+        res.send(tweet);
+    });
+});
+
+// Get today's latest N tweets.
+router.get('/today', function(req, res, next){
+    Tweet.getLatestNTweets(req.param("n"), function(err, tweet){
         if(err) {
             next(err);
         }

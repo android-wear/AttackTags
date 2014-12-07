@@ -14,4 +14,7 @@ assert.equal(
     Tweet.whereClauseWithKeywords(["privacy", "phone"]),
     "n.text=~'.*(?i)privacy.*' and n.text=~'.*(?i)phone.*'");
 
+assert.equal(
+    Tweet.getLatestNTweetsQuery(3),
+    "MATCH (n:Tweet) where n.text is not null return n order by n.created_at DESC limit 3;");
 console.log("==========PASSED===============");
