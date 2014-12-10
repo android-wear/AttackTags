@@ -1,1 +1,1 @@
-rsync -avL --progress -e "ssh -i /home/yang/AWS/yangsha.pem" ApiServer/ ubuntu@ec2-54-68-224-109.us-west-2.compute.amazonaws.com:~/Online/ApiServer
+rsync -avL --progress -e "ssh -i /home/yang/AWS/yangsha.pem" /home/yang/git/AttackTags/Online/ApiServer/ ubuntu@54.69.178.119:~/Online/ApiServer

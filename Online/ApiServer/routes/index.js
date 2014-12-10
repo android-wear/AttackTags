@@ -15,10 +15,20 @@ router.get('/', function(req, res, next){
         // Remove url links from text.
         var urlRegex = /(https?:\/\/[^\s]+)/g;
         var endsWithNonCharRegex = /\W+$/;
+        // Sample:
+        // before: RT @lengxiaohua: this is real text.
+        // after: this is real text.
+        var reTweetPatternRegex = /RT @\w+: /g;
+        // Sample: 
+        // before: asdfasdf @yangsha @anotherguy qqqq.
+        // after: both @yangsha and @anogherguy removed.
+        var pingOtherPeoplePatternRegex = /@\w+/g;
         for (var i = 0; i < tweetsWithUrl.length; ++i) {
             tweetsWithUrl[i][0] = 
                 tweetsWithUrl[i][0].replace(urlRegex, "")
-                .replace(endsWithNonCharRegex, "");   
+                .replace(endsWithNonCharRegex, "")
+                .replace(reTweetPatternRegex, "")
+                .replace(pingOtherPeoplePatternRegex, "");
         }
         res.render('index', {"n": n, "tweetsWithUrl": tweetsWithUrl});
     });
