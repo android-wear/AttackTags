@@ -3,6 +3,7 @@
   <head>
     <title>Today's <%=n%> most interesting network security topics</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta http-equiv="refresh" content="60">    
   </head>
   <body>
     <h2>Today's <%=n%> most interesting network security topics</h2>
@@ -11,7 +12,7 @@
     <tbody border="1">
         <% tweetsWithUrl.forEach(function(data) { %>     
         <tr>
-            <td><a href="<%=data[1]%>"><h3><%=data[0]%></h3></a></td>
+            <td><a href="<%=data[1]%>" target="_blank"><h3><%=data[0]%></h3></a></td>
         </tr>
         <% }) %>
     </tbody>       
