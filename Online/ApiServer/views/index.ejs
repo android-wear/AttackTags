@@ -8,13 +8,22 @@
   <body>
     <h2>Today's <%=n%> most interesting network security topics</h2>
     <p><h4>Click to open article</h4></p>
-    <table border="5" style="width:100%">
+    <table border="0" style="width:50%">
     <tbody border="1">
-        <% tweetsWithUrl.forEach(function(data) { %>     
+        <% for(var i = 0; i < tweetsWithUrl.length && i < n && i < imgList.length; ++i) {%>
         <tr>
-            <td><a href="<%=data[1]%>" target="_blank"><h3><%=data[0]%></h3></a></td>
+            <td>
+            <a href="<%=tweetsWithUrl[i].link%>" target="_blank">
+            <img width="100%" src="<%=imgList[i].unescapedUrl%>"></img>
+            </a>            
+            </td>
+            <td><a href="<%=tweetsWithUrl[i].link%>" target="_blank"><b>
+            <h1><%=tweetsWithUrl[i].text%></h1></b></a></td>
         </tr>
-        <% }) %>
+        <tr>
+            <td colspan="2" height="50"><hr noshade size=3></td>
+        </tr>        
+        <% } %>
     </tbody>       
     </table>
   </body>

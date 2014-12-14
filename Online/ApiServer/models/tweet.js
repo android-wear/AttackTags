@@ -23,6 +23,9 @@ Object.defineProperty(Tweet.prototype, "id", {
 Object.defineProperty(Tweet.prototype, "text", {
     get: function () {
         return this.tweet.text;
+    },
+    set: function (val) {
+        this.tweet.text = val;
     }
 });
 
@@ -35,6 +38,12 @@ Object.defineProperty(Tweet.prototype, "created_at", {
 Object.defineProperty(Tweet.prototype, "favorites", {
     get: function () {
         return this.tweet.favorites;
+    }
+});
+
+Object.defineProperty(Tweet.prototype, "link", {
+    get: function () {
+        return this.tweet.link;
     }
 });
 
@@ -102,8 +111,16 @@ Tweet.getLatestNTweets = function (n, callback) {
         if (err) {
             return callback(err);
         }
-        callback(null, result.data);
-    });    
+        var output = [];
+        result.data.forEach(function(data) {
+            output.push({
+                "id": data[0],             
+                "text": data[1],
+                "link": data[2],
+            });
+        });
+        callback(null, output);
+    });
 }
 
 // Sample query:
@@ -143,7 +160,7 @@ Tweet.getLatestNTweetsQuery = function (n) {
     }
     var query = 
         "MATCH (n:Tweet)-[k:CONTAINS]-(url:Link) where n.text is not null " + 
-        "and n.favorites > 0 return n.text,url.url order by n.id DESC limit " + n + ";";
+        "and n.favorites > 0 return n.id, n.text,url.url order by n.id DESC limit " + n + ";";
     return query;
 }
 
