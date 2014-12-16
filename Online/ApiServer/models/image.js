@@ -1,5 +1,6 @@
 var client = require('google-images');
-var defaultImageUrl = "http://www.habeyusa.com/wp-content/uploads/2012/12/Network-Security.jpg";
+//var defaultImageUrl = "http://www.habeyusa.com/wp-content/uploads/2012/12/Network-Security.jpg";
+var defaultImageUrl = "/images/1.jpg";
 var defaultWidth = 300;
 var defaultHeight = 225;
 var Image = module.exports = function Image(image) {
@@ -31,6 +32,7 @@ Object.defineProperty(Image.prototype, "height", {
 });
 
 Image.getImage = function(target, callback) {
+    /*
     client.search(target.text, function(err, imageList) {
         if (err) {
             return callback(err);
@@ -60,4 +62,12 @@ Image.getImage = function(target, callback) {
             "height": parseInt(img.height)
         }));
     });
+    */
+    var defaultImg = new Image({
+        "url": defaultImageUrl,
+        "unescapedUrl": defaultImageUrl,
+        "width": defaultWidth,
+        "height": defaultHeight
+    });
+    return callback(false, defaultImg);    
 }
