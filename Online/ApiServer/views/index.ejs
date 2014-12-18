@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Today's <%=n%> most interesting network security topics</title>
+    <title><%=n%> things you may want to know about cybersecurity</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <meta http-equiv="refresh" content="60">    
   </head>
   <body>
-    <h2>Today's <%=n%> most interesting network security topics</h2>
-    <p><h4>Click to open article</h4></p>
+    <h2><%=n%> Things You May Want To Know About Cybersecurity</h2>
+    <p><h4>Click to open</h4></p>
     <table border="0" style="width:75%" cellpadding="10">
     <tbody border="1">
         <% for(var i = 0; i < tweetsWithUrl.length && i < n && i < imgList.length; ++i) {%>
