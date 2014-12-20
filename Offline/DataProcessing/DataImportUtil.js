@@ -94,6 +94,10 @@ var cleanup = function cleanup(text) {
 
 var tweetDateTimeStringToTicks = 
     function tweetDateTimeStringToTicks(datetime) {
+    if (!datetime) {
+        return 0;
+    }
+    
     var date = new Date(datetime);
     return date.getTime();
 }
