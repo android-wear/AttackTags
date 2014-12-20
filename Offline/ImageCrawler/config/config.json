@@ -6,7 +6,7 @@
   },
   "production": {
     "port": 27017,
-    "uristring": "mongodb://localhost/TestAttackTags",    
+    "uristring": "mongodb://localhost/AttackTags",   
     "enableDebugLogging": false
   }
 }
