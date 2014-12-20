@@ -32,38 +32,7 @@ Object.defineProperty(Image.prototype, "height", {
 });
 
 Image.getImage = function(target, callback) {
-    /*
-    client.search(target.text, function(err, imageList) {
-        if (err) {
-            return callback(err);
-        }
-        var defaultImg = new Image({
-            "url": defaultImageUrl,
-            "unescapedUrl": defaultImageUrl,
-            "width": defaultWidth,
-            "height": defaultHeight
-        }); 
-        if (err || !imageList || imageList.length == 0 || 
-            !imageList[0].url || !imageList[0].width || !imageList[0].height) {
-            return callback(false, defaultImg);
-        }
-        var img = defaultImg;
-        for (var i = 1; i < imageList.length; ++i) {
-            if (imageList[i].width > 200 && 
-                    imageList[i].height < 400) {
-                img = imageList[i];
-                break;
-            }
-        }
-        return callback(false, new Image({
-            "url": img.url,
-            "unescapedUrl": img.unescapedUrl,
-            "width": parseInt(img.width), 
-            "height": parseInt(img.height)
-        }));
-    });
-    */
-    var defaultImg = new Image({
+   var defaultImg = new Image({
         "url": defaultImageUrl,
         "unescapedUrl": defaultImageUrl,
         "width": defaultWidth,
