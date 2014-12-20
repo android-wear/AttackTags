@@ -6,6 +6,7 @@ var db = new neo4j(config[env].neo4jConnectionString);
 //var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
 var fs = require('fs');
 var DataImportUtil = require('./DataImportUtil');
+var ImageCrawler = require('../ImageCrawler/crawler.js');
 var async = require('async');
 var query = 
 ['UNWIND {tweets} AS t',
@@ -76,6 +77,13 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                                         ", tweet: " + data.id); 
                          });
                     }
+                    tweetsForOneUser["tweets"].forEach(function cleanup(data) {
+                        if (config[env].enableDebugLogging == true) {
+                            console.log("Got data event. Writing " + 
+                                        data.user.screen_name + 
+                                        ", tweet: " + data.id);
+                        }
+                     });
                     db.cypherQuery(query, tweetsForOneUser, function(err, res) {
                         if (config[env].enableDebugLogging == true) {                        
                             tweetsForOneUser["tweets"].forEach(function(data) {
@@ -89,6 +97,21 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                             console.log(fileToBeProcessed);
                             console.log(err);
                             return done(null);
+                        } else {
+                            // crawl image through image crawler, and 
+                            // store in Mongo Db.
+                            tweetsForOneUser["tweets"].forEach(function crawl(tweet) {
+                                if (tweet.text && tweet.entities && 
+                                    tweet.entities.urls && 
+                                    tweet.entities.urls.length > 0) {
+                                    ImageCrawler.crawl(
+                                        tweet.id, tweet.text, function print(err) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
+                                }
+                            });
                         }
                     });
                 }

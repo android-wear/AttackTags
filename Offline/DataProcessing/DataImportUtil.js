@@ -35,11 +35,16 @@ DataImportUtil.prototype.processTweetsForOneUser =
 
 var processOneTweet =  
     function processOneTweet(dataImportUtil, data, nodeLabel) {
+    data.text = cleanup(data.text);
     if (data.id && data.text && data.user.id 
             && dataImportUtil.idMap.indexOf(data.id) == -1) {
+        data.created_at = tweetDateTimeStringToTicks(data.created_at);
         dataImportUtil.idMap.push(data.id);
         dataImportUtil.db.readNodesWithLabelsAndProperties(
             nodeLabel, {id: data.id}, function(err, result){
+            if (err) {
+                console.log(err);
+            }
             if(!err && (!result || result.length == 0)) {
                 dataImportUtil.content.push(data);
             }
@@ -63,6 +68,34 @@ var processOneTweet =
             dataImportUtil.emit("data", {tweets: dataImportUtil.content});
         }
     }
+}
+
+// Clean up the unnecessary patterns from the text.
+var cleanup = function cleanup(text) {
+    if (!text) {
+        return "";
+    }
+    // Remove url links from text.
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    var endsWithNonCharRegex = /\W+$/;
+    // Sample:
+    // before: RT @lengxiaohua: this is real text.
+    // after: this is real text.
+    var reTweetPatternRegex = /RT @\w+: /g;
+    // Sample: 
+    // before: asdfasdf @yangsha @anotherguy qqqq.
+    // after: both @yangsha and @anogherguy removed.
+    var pingOtherPeoplePatternRegex = /@\w+/g;
+    return text.replace(urlRegex, "")
+               .replace(endsWithNonCharRegex, "")
+               .replace(reTweetPatternRegex, "")
+               .replace(pingOtherPeoplePatternRegex, "");    
+}
+
+var tweetDateTimeStringToTicks = 
+    function tweetDateTimeStringToTicks(datetime) {
+    var date = new Date(datetime);
+    return date.getTime();
 }
 
 module.exports=DataImportUtil;

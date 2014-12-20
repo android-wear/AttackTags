@@ -1,0 +1,12 @@
+{
+  "development": {
+    "port": 27017,
+    "uristring": "mongodb://localhost/TestAttackTags",
+    "enableDebugLogging": true
+  },
+  "production": {
+    "port": 27017,
+    "uristring": "mongodb://localhost/TestAttackTags",    
+    "enableDebugLogging": false
+  }
+}
