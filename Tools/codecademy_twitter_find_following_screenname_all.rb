@@ -64,13 +64,19 @@ users = nil
 first_address = craft_uri_with_cursor("-1")
 # print first_address
 # print "\n"
-init_user_list = get_api_response(first_address)
-print_users(init_user_list)
-if init_user_list["next_cursor"] != 0
-	new_address = craft_uri_with_cursor(init_user_list["next_cursor"])
-	print new_address
-	new_user_list = get_api_response(new_address)
-	print_users(new_user_list)
+user_list = get_api_response(first_address)
+print_users(user_list)
+=begin
+while user_list["next_cursor"] != 0
+	new_address = craft_uri_with_cursor(user_list["next_cursor"])
+	# print new_address
+	user_list += get_api_response(new_address)
 end
-
+=end
+begin
+	new_address = craft_uri_with_cursor(user_list["next_cursor"])
+	# print new_address
+	user_list = get_api_response(new_address)
+	print_users(user_list)
+end until user_list["next_cursor"] == 0
 nil
