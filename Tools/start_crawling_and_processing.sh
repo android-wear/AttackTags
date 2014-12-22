@@ -1,7 +1,9 @@
 echo Start Crawler.
-sudo NODE_ENV=production forever start -w ~/Offline/AttackTags/DataCollection/Runner.js
-echo Start Processor.	
-sudo NODE_ENV=production forever start -w ~/Offline/AttackTags/DataProcessing/DataImporter.js
+cd ~/Offline/DataCollection
+sudo NODE_ENV=production forever start -w Runner.js
+echo Start Processor.
+cd ~/Offline/DataProcessing
+sudo NODE_ENV=production forever start -w DataImporter.js
 echo verify runner has started.
 if [ -z "$(ps aux | grep forever | grep Runner)" ]; then
   echo "Crawler runner not started!!!!!"
