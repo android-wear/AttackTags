@@ -6,7 +6,7 @@ var db = new neo4j(config[env].neo4jConnectionString);
 //var tweets = require('/home/yang/logs/twitterTestLogs/2014_10_1_1_50_307_148.json');
 var fs = require('fs');
 var DataImportUtil = require('./DataImportUtil');
-var ImageCrawler = require('../ImageCrawler/crawler.js');
+//var ImageCrawler = require('../ImageCrawler/crawler.js');
 var async = require('async');
 var query = 
 ['UNWIND {tweets} AS t',
@@ -97,7 +97,10 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                             console.log(fileToBeProcessed);
                             console.log(err);
                             return done(null);
-                        } else {
+                        } 
+                        /*
+                         * Stop crawling image.
+                        else {
                             // crawl image through image crawler, and 
                             // store in Mongo Db.
                             tweetsForOneUser["tweets"].forEach(function crawl(tweet) {
@@ -113,6 +116,7 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                                 }
                             });
                         }
+                        */
                     });
                 }
             });
