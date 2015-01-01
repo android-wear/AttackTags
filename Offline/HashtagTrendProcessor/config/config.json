@@ -9,6 +9,6 @@
     "port": 27017,
     "uristring": "mongodb://localhost/AttackTags",
     "runningIntervalInMs": 600000,
-    "enableDebugLogging": false
+    "enableDebugLogging": true
   }
 }
