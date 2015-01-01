@@ -84,7 +84,7 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                                         ", tweet: " + data.id);
                         }
                      });
-                    db.cypherQuery(query, tweetsForOneUser, function(err, res) {
+                     db.cypherQuery(query, tweetsForOneUser, function(err, res) {
                         if (config[env].enableDebugLogging == true) {                        
                             tweetsForOneUser["tweets"].forEach(function(data) {
                                 console.log("Writing to db: " + 
@@ -92,7 +92,7 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                                             ", tweet: " + data.id); 
                              });
                         }
-                        if (err) {
+                        if (err) {                            
                             console.log("err!");
                             console.log(fileToBeProcessed);
                             console.log(err);
@@ -121,7 +121,7 @@ function processFile(fileToBeProcessed, cleanupFileName, cleanup) {
                 }
             });
             return done();
-        }, function(err) {
+        }, function (err) {
             if (cleanup && !err) {
                 console.log("moved to " + cleanupFileName);
                 fs.renameSync(
