@@ -8,7 +8,7 @@
     "enableDebugLogging": true
   },
   "production": {
-    "runningIntervalInMs": 1200000,
+    "runningIntervalInMs": 300000,
     "logRootPath": "/home/ubuntu/logs/twitter/",
     "neo4jConnectionString": "http://localhost:7474",
     "cleanUpFileAfterProcessing": true,
