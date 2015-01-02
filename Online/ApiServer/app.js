@@ -4,10 +4,44 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var env = 
+    process.env.NODE_ENV == 'production' || process.env.NODE_ENV == 'development' ?
+    process.env.NODE_ENV : 'development';
+var config = require('./config.json')[env];
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var tweets = require('./routes/tweets');
+
+// Start mongodb.
+if (env != 'production') {
+    mongoose.set('debug', true);
+}
+
+mongoose.connect(config.mongodbConnectionUri);
+mongoose.connection.on('connected', function () {
+    console.log('Mongoose default connection open to ' + 
+                config.mongodbConnectionUri);
+});
+
+// If the connection throws an error
+mongoose.connection.on('error',function (err) {
+    console.log('Mongoose default connection error: ' + err);
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {
+    console.log('Mongoose default connection disconnected');
+});
+
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', function() {
+    mongoose.connection.close(function () {
+        console.log('Mongoose default connection disconnected through app termination');
+        process.exit(0);
+    });
+});
 
 var app = express();
 

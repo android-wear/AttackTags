@@ -1,10 +1,12 @@
 {
   "development": {
     "port": 3000,
-    "numberOfTweetsOnHomePage": 2
+    "numberOfTweetsOnHomePage": 2,
+    "mongodbConnectionUri": "mongodb://localhost/TestAttackTags"
   },
   "production": {
     "port": 80,
-    "numberOfTweetsOnHomePage": 10
+    "numberOfTweetsOnHomePage": 10,
+    "mongodbConnectionUri": "mongodb://localhost/AttackTags"    
   }
 }

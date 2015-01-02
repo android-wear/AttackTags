@@ -3,22 +3,51 @@ var express = require('express');
 var router = express.Router();
 var Tweet = require('../models/tweet');
 var Image = require('../models/image');
+var PopularHashtag = require('../models/popularHashtag');
 
 var env = 
     process.env.NODE_ENV == 'production' || process.env.NODE_ENV == 'development' ?
     process.env.NODE_ENV : 'development';
-var config = require('../config.json')[env]
+var config = require('../config.json')[env];
 
 /* GET home page. */
 router.get('/', function(req, res, next){
+    var requestParams = {};    
     var n = req.param("n");
     if (!n) {
         n = config.numberOfTweetsOnHomePage;
     }
-    Tweet.getLatestNTweets(n, function(err, tweetsWithUrl){
-        if(err) {
-            next(err);
+    requestParams.topN = n;
+    async.parallel({
+        n: function getN(callback) {
+            callback(null, requestParams.topN);
+        },
+        hashtags: function getHashtags(callback) {
+            PopularHashtag.getTags(callback);
+        },
+        tweetsWithImg: function getTweetsWithImage(callback) {
+            getTweetsAndImages(res, requestParams, callback);
         }
+    }, function callback(err, output) {
+        postQuery(res, next, err, output);
+    });
+});
+
+var postQuery = function postQuery(res, next, err, output) {
+    if (err) {
+        next(err);
+    } else {
+        console.log(output);
+        res.render("index", output);
+    }
+}
+
+var getTweetsAndImages = function getTweetsAndImages(res, requestParams, callback) {
+    Tweet.getLatestNTweets(requestParams.topN, function(err, tweetsWithUrl){
+        if (err) {
+            return callback(err);
+        }
+        
         // Remove url links from text.
         var urlRegex = /(https?:\/\/[^\s]+)/g;
         var endsWithNonCharRegex = /\W+$/;
@@ -26,12 +55,13 @@ router.get('/', function(req, res, next){
         // before: RT @lengxiaohua: this is real text.
         // after: this is real text.
         var reTweetPatternRegex = /RT @\w+: /g;
-        // Sample: 
+        // Sample:
         // before: asdfasdf @yangsha @anotherguy qqqq.
         // after: both @yangsha and @anogherguy removed.
         var pingOtherPeoplePatternRegex = /@\w+/g;
         var existedUrls = [];
         var existedTitles = [];
+        var imageList = [];
         for (var i = 0; i < tweetsWithUrl.length; ++i) {
             tweetsWithUrl[i].text = 
                 tweetsWithUrl[i].text.replace(urlRegex, "")
@@ -45,11 +75,15 @@ router.get('/', function(req, res, next){
             } else {
                 existedTitles.push(tweetsWithUrl[i].text);
                 existedUrls.push(tweetsWithUrl[i].link);
+                imageList.push(Image.getDefaultImage());
             }
         }
-        async.mapSeries(tweetsWithUrl, Image.getImage, function(err, imageList) {
-            res.render('index', {"n": n, "tweetsWithUrl": tweetsWithUrl, "imgList": imageList});
-        });
-    });
-});
+        
+        callback(null,
+                 {
+                    tweetsWithUrl: tweetsWithUrl,
+                    imgList: imageList
+                 });
+    });    
+}
 module.exports = router;

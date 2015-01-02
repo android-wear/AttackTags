@@ -40,3 +40,13 @@ Image.getImage = function(target, callback) {
     });
     return callback(false, defaultImg);    
 }
+
+Image.getDefaultImage = function getImage() {
+    var defaultImg = new Image({
+        "url": defaultImageUrl,
+        "unescapedUrl": defaultImageUrl,
+        "width": defaultWidth,
+        "height": defaultHeight
+    });
+    return defaultImg;
+}
