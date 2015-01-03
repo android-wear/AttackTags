@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var compression = require('compression');
 var mongoose = require('mongoose');
 var env = 
     process.env.NODE_ENV == 'production' || process.env.NODE_ENV == 'development' ?
@@ -55,6 +56,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+// Compress all responses with gzip.
+app.use(compression());
+// Cache static content.
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
