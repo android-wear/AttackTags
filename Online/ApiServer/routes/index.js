@@ -37,7 +37,6 @@ var postQuery = function postQuery(res, next, err, output) {
     if (err) {
         next(err);
     } else {
-        console.log(output);
         res.render("index", output);
     }
 }

@@ -8,7 +8,7 @@
   "production": {
     "port": 27017,
     "uristring": "mongodb://localhost/AttackTags",
-    "runningIntervalInMs": 600000,
+    "runningIntervalInMs": 1666000,
     "enableDebugLogging": true
   }
 }

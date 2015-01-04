@@ -33,7 +33,7 @@ var PopularHashtag = module.exports = function PopularHashtag() {
 PopularHashtag.getTags = function getTags(callback) {
     PopularHashtag.getTagsFromTimeRange(
          // Start date sets to 3 days ago.
-         getDateTimeInMilSeconds(-1),
+         getDateTimeInMilSeconds(-2),
          getDateTimeInMilSeconds(0),
          callback);
 }

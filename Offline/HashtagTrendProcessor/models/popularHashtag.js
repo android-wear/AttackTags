@@ -34,6 +34,8 @@ var PopularHashtag = module.exports = function PopularHashtag() {
 var smallWeight = 1;
 var mediumWeight = 50;
 var largeWeight = 100;
+var blacklistedTags = ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
+                     "socialmedia", "security", "hacking", "datasecurity", "news"];
 
 PopularHashtag.update = function update(hashtagTrendModel, preDatetimeId, curDatetimeId) {
     var baselineTags = [];
@@ -73,6 +75,10 @@ PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newT
         newTrends = baselineTrends;
     }
     for (var i = 0; i < newTrends.length; ++i) {
+        if (blacklistedTags.indexOf(newTrends[i].name)) {
+            // Skip.
+            continue;
+        }
         var index = nameCollections.indexOf(newTrends[i].name);
         if (index == -1) {
             update(newTrends[i].name,
