@@ -1,4 +1,4 @@
-// App references.
+// Load hashtags from Neo4j to Mongodb.
 var config = require('./config/config.json');
 var env = process.env['NODE_ENV'] || 'development';
 var debug = config[env].enableDebugLogging;
