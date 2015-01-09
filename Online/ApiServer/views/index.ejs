@@ -16,6 +16,7 @@
 
     <!-- Custom CSS -->
     <link href="css/1-col-portfolio.css" rel="stylesheet">
+    <link href="css/test.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,7 +42,7 @@
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -54,43 +55,141 @@
                 <a class="navbar-brand" href="#">AttackTags</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <!--
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     <li>
-                        <a href="#">About</a>
+                        <a href="#breakouts">Breakouts</a>
                     </li>
                     <li>
-                        <a href="#">Services</a>
+                        <a href="#news" >News</a>
+                    </li>
+                    <li>
+                        <a href="#vulns">Vulns</a>
+                    </li>
+                    <li>
+                        <a href="#Events">Events</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#">About</a>
                     </li>
                     <li>
                         <a href="#">Contact</a>
                     </li>
                 </ul>
             </div>
-            -->
             <!-- /.navbar-collapse -->
         </div>
-        <!-- /.container -->
+        
     </nav>
 
-    <!-- Page Content -->
     <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header">AttackTags 
+                    <medium>- Real time threat intelligence</medium>
+                </h4>
+                <p>
+                    <medium>Today's Most Popular Hash Tags:</medium>
+                    <medium>
+                    <% hashtags.forEach(function print(data) {%>
+                    #<%=data.name%>,    
+                    <% })%>
+                    </medium>
+                </p>        
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+
+    <!-- Page Content -->
+    <div class="container titlepadding" id="breakouts">
 
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">AttackTags 
-                    <small>- Real time threat intelligence</small>
-                </h1>
-                <p>
-                    <medium>Today's Popular Attack Tags:</medium>
-			        <medium>
-				    <% hashtags.forEach(function print(data) {%>
-				    #<%=data.name%>,    
-				    <% })%>
-				    </medium>
-			    </p>        
+                <h4 class="page-header">Breakouts 
+                    <small>- Most Recent Security Topics</small>
+                </h4>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- /.row -->
+
+        <% for (var i = 0; i < tweetsWithImg.tweetsWithUrl.length && i < n; ++i) {%>
+        <div class="row">
+            <div class="col-md-2">
+                <a href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    <img height="120" width="120" class="img-responsive" src="<%=tweetsWithImg.imgList[i].unescapedUrl%>" alt="">
+                </a>
+            </div>
+            <div class="col-md-9">
+                <h4><%=tweetsWithImg.tweetsWithUrl[i].text%></h4>
+                <a class="btn btn-primary" href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    View News<span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        
+        <% } %>
+
+        <hr>
+    </div>
+    <!-- /.container -->
+
+    <!-- Page Content -->
+    <div class="container titlepadding" id="news">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header">News 
+                    <small>- General Security News</small>
+                </h4>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- /.row -->
+
+        <% for (var i = 0; i < tweetsWithImg.tweetsWithUrl.length && i < n; ++i) {%>
+        <div class="row">
+            <div class="col-md-2">
+                <a href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    <img height="120" width="120" class="img-responsive" src="<%=tweetsWithImg.imgList[i].unescapedUrl%>" alt="">
+                </a>
+            </div>
+            <div class="col-md-9">
+                <h4><%=tweetsWithImg.tweetsWithUrl[i].text%></h4>
+                <a class="btn btn-primary" href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    View News<span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        
+        <% } %>
+
+        <hr>
+    </div>
+    <!-- /.container -->
+
+    <!-- Page Content -->
+    <div class="container titlepadding" id="vulns">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header">Vulnerabilities 
+                    <small>- Recently Published Vulnerabilities</small>
+                </h4>
             </div>
         </div>
         <!-- /.row -->
@@ -116,6 +215,48 @@
         <% } %>
 
         <hr>
+    </div>
+    <!-- /.container -->
+
+    <!-- Page Content -->
+    <div class="container titlepadding" id="Events">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header">Events 
+                    <small>- Recent Events/Conferences/Meetups/Trainings</small>
+                </h4>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <% for (var i = 0; i < tweetsWithImg.tweetsWithUrl.length && i < n; ++i) {%>
+        <div class="row">
+            <div class="col-md-2">
+                <a href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    <img height="120" width="120" class="img-responsive" src="<%=tweetsWithImg.imgList[i].unescapedUrl%>" alt="">
+                </a>
+            </div>
+            <div class="col-md-9">
+                <h4><%=tweetsWithImg.tweetsWithUrl[i].text%></h4>
+                <a class="btn btn-primary" href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
+                    View News<span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+        
+        <% } %>
+
+        <hr>
+    </div>
+    <!-- /.container -->
+
+    <!-- Page Content -->
+    <div class="container">
         <!-- Footer -->
         <footer>
             <div class="row">
@@ -125,9 +266,7 @@
             </div>
             <!-- /.row -->
         </footer>
-
     </div>
-    <!-- /.container -->
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
