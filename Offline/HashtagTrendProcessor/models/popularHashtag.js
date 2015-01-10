@@ -77,10 +77,12 @@ PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newT
     for (var i = 0; i < newTrends.length; ++i) {
         if (blacklistedTags.indexOf(newTrends[i].name) != -1) {
             // Skip.
+            console.log("Skipping " + newTrends[i].name);
             continue;
         }
         var index = nameCollections.indexOf(newTrends[i].name);
         if (index == -1) {
+            console.log("Add: " + newTrends[i].name);
             update(newTrends[i].name,
                    dateTimeInMilSeconds,
                    newTrends[i].count,
