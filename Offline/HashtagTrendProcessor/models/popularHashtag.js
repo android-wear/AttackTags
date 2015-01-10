@@ -75,7 +75,7 @@ PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newT
         newTrends = baselineTrends;
     }
     for (var i = 0; i < newTrends.length; ++i) {
-        if (blacklistedTags.indexOf(newTrends[i].name)) {
+        if (blacklistedTags.indexOf(newTrends[i].name) != -1) {
             // Skip.
             continue;
         }
