@@ -42,8 +42,13 @@ var postQuery = function postQuery(res, next, err, output) {
 }
 
 var getTweetsAndImages = function getTweetsAndImages(res, requestParams, callback) {
-    Tweet.getLatestNTweets(requestParams.topN, function(err, tweetsWithUrl){
+    Tweet.getTweetsByCategoryAndDate('GENERAL', 
+                                     getDateTimeInMilSeconds(-10),
+                                     getDateTimeInMilSeconds(1),
+                                     requestParams.topN, 
+                                     function(err, tweetsWithUrl){
         if (err) {
+            console.log(err);
             return callback(err);
         }
         
@@ -85,4 +90,18 @@ var getTweetsAndImages = function getTweetsAndImages(res, requestParams, callbac
                  });
     });    
 }
+
+//Returns GMT time.
+//delta is the difference to today. delta = 0 means get date time for 
+//today.
+//If beginningOfTheDay = true, it will set date time to the beginning of the day.
+//If endOfTheDay = true, it will set date time to the end of the day.
+var getDateTimeInMilSeconds = function getDateTimeInMilSeconds(delta) {
+  var date = new Date();
+  date.setDate(date.getDate() + delta);
+  // Set to beginning of the day.
+  date.setHours(0,0,0,0);
+  return date.getTime();
+}
+
 module.exports = router;
