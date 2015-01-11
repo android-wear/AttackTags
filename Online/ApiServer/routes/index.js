@@ -43,7 +43,7 @@ var postQuery = function postQuery(res, next, err, output) {
 
 var getTweetsAndImages = function getTweetsAndImages(res, requestParams, callback) {
     Tweet.getTweetsByCategoryAndDate('GENERAL', 
-                                     getDateTimeInMilSeconds(-10),
+                                     getDateTimeInMilSeconds(-1),
                                      getDateTimeInMilSeconds(1),
                                      requestParams.topN, 
                                      function(err, tweetsWithUrl){
