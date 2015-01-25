@@ -2,7 +2,7 @@
   "development": {
     "perUserTweetsCount": 2,
     "runningIntervalInMs": 5000,
-    "logRootPath": "/home/yang/logs/twitterTestLogs/",
+    "logRootPath": "/home/empti/logs/twitterTestLogs/",
     "totalRounds": 1,
     "twitterCrawlingRateLimit": 2
   },

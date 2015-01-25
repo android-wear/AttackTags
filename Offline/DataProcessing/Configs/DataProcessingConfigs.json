@@ -1,7 +1,7 @@
 {
   "development": {
     "runningIntervalInMs": 15000000,
-    "logRootPath": "/home/yang/logs/twitterTestLogs/",
+    "logRootPath": "/home/empti/logs/twitterTestLogs/",
     "neo4jConnectionString": "http://localhost:7474",
     "cleanUpFileAfterProcessing": false,
     "maxEventListenerCount": 500,
