@@ -35,7 +35,8 @@ var smallWeight = 1;
 var mediumWeight = 50;
 var largeWeight = 100;
 var blacklistedTags = ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
-                     "socialmedia", "security", "hacking", "datasecurity", "news"];
+                     "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
+                     "exploit", "technews", "technology"];
 
 PopularHashtag.update = function update(hashtagTrendModel, preDatetimeId, curDatetimeId) {
     var baselineTags = [];
