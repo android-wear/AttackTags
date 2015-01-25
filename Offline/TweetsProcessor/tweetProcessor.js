@@ -40,7 +40,6 @@ var loadTweets = function loadTweets() {
     var now = (new Date()).getTime();
     // 2 hour ago.
     var startDate = getPastDateTimeInMilSec(now, 0, 2, 0);
-    console.log(startDate);
     TweetInNeo4j.getTweets(startDate, now, function(err, tweets) {
         tweets.forEach(write);
     });
