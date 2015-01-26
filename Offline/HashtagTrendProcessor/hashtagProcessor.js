@@ -7,17 +7,13 @@ var uristring = config[env].uristring;
 
 // neo4j references.
 var neo4j = require('node-neo4j');
-var neo4jDb = new neo4j(
-                        process.env['NEO4J_URL'] ||
-                        process.env['GRAPHENEDB_URL'] ||
-                        'http://localhost:7474'
-                    );
 var db = new neo4j(config[env].neo4jConnectionString);
 
 // Mongodb references.
 var mongoose = require ('mongoose');
 var HashtagTrend = require('./models/hashtagTrend.js');
 var PopularHashtag = require('./models/popularHashtag.js');
+var HashtagToTweet = require('./models/hashtagToTweet.js');
 
 // Enable mongoose query level debugging for debug mode.
 if (debug) {
@@ -69,6 +65,11 @@ var getQuery = function getQuery(startDate, endDate, minFavorites, minCounts) {
         "' and STR(t.created_at) <= '" + endDate + "' with n, count(r) as cnt " + 
         "order by cnt DESC where cnt >= " + minCounts + " return n.name, cnt limit 20;";
     console.log(query);
+    /*
+    if (debug) {
+        return "match (n:Hashtag)-[r:TAGS]->(t:Tweet) where t.text is not null and t.favorites >= 0 and STR(t.created_at) > '1419049079000' and STR(t.created_at) < '1419235199999' with t, n, count(r) as cnt order by cnt DESC where cnt >= 0 return n.name, cnt, t.id limit 20;"
+    }
+    */
     return query;
 }
 
@@ -79,10 +80,12 @@ var updateHashtagTrend = function updateHashtagTrend(hashtags, dateTimeInMilSeco
         return;
     }
     hashtags.forEach(function process(data) {
-        HashtagTrend.update({timeBucketId: dateTimeInMilSeconds, name: data[0]},
+        var hashTagName = data[0];
+        HashtagTrend.update({timeBucketId: dateTimeInMilSeconds, name: hashTagName},
                             {$set: {count: data[1], date: dateTimeInMilSeconds}},
                             {upsert: true},
                             updatePopularHashtags);
+        HashtagToTweet.update(hashTagName, dateTimeInMilSeconds, null);
     });
 }
 

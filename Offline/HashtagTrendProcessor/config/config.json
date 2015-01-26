@@ -2,12 +2,14 @@
   "development": {
     "port": 27017,
     "uristring": "mongodb://localhost/TestAttackTags",
-    "runningIntervalInMs": 1000, 
+    "neo4jConnectionString": "http://localhost:7474",
+    "runningIntervalInMs": 30000, 
     "enableDebugLogging": true
   },
   "production": {
     "port": 27017,
     "uristring": "mongodb://localhost/AttackTags",
+    "neo4jConnectionString": "http://localhost:7474",    
     "runningIntervalInMs": 1666000,
     "enableDebugLogging": true
   }
