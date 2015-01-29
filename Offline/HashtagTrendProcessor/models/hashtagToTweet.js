@@ -33,7 +33,8 @@ var db = new neo4j(config[env].neo4jConnectionString);
 var HashtagToTweet = module.exports = function HashtagToTweet() {
 }
 
-HashtagToTweet.update = function update(hashtagName, dateTimeInMs, callback) {
+HashtagToTweet.update = function update(hashtagName, dateTimeInMs,
+                                        callback) {
     var query = 
         "match (h:Hashtag)-[]-(t:Tweet) where h.name= '" + hashtagName + "' " + 
         "and STR(t.created_at) >= '" + dateTimeInMs + "' return t.id;";
@@ -51,14 +52,13 @@ HashtagToTweet.update = function update(hashtagName, dateTimeInMs, callback) {
 }
 
 HashtagToTweet.updateMongoDb = function updateMongoDb(hashtagName, 
-                                                      tweetIdList, 
+                                                      tweetIdList,
                                                       dateTimeInMs, 
                                                       callback) {
     tweetIdList.forEach(updateTable);
-    console.log("updating tweets in HashtagToTweet table: " + tweetIdList.length);    
     function updateTable(tweetId) {
         HashtagToTweetModel.update(
-            {name: hashtagName, dateTimeInMilSeconds: dateTimeInMs, tweetId: tweetId},
+            {name: hashtagName, dateTimeInMilSeconds: dateTimeInMs, tweetId: Number(tweetId)},
             {$set: {date: dateTimeInMs}},
             {upsert: true},
             callback);

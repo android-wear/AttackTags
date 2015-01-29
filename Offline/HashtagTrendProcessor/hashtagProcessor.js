@@ -4,6 +4,7 @@ var env = process.env['NODE_ENV'] || 'development';
 var debug = config[env].enableDebugLogging;
 var port = config[env].port;
 var uristring = config[env].uristring;
+var skippableHashtags = config[env].skippableHashtags;
 
 // neo4j references.
 var neo4j = require('node-neo4j');
@@ -14,6 +15,7 @@ var mongoose = require ('mongoose');
 var HashtagTrend = require('./models/hashtagTrend.js');
 var PopularHashtag = require('./models/popularHashtag.js');
 var HashtagToTweet = require('./models/hashtagToTweet.js');
+var async = require('async');
 
 // Enable mongoose query level debugging for debug mode.
 if (debug) {
@@ -38,7 +40,10 @@ mongoose.connect(uristring, function printTrace(err, res) {
 var getHashtagsForToday = function getHashtagsForToday() {
     var startDateInMilSecond = getDateTimeInMilSeconds(0, true, false);
     var endDateInMilSecond = getDateTimeInMilSeconds(0, false, true);
-    var query = getQuery(startDateInMilSecond, endDateInMilSecond, 1, 2);
+    var query = getQuery(startDateInMilSecond, endDateInMilSecond, 
+                         config[env].minFavoritesCount, 
+                         config[env].minTweetCount);
+    console.log(query);
     db.cypherQuery(query, function processData(err, result) {
         if (err) {
             console.log(err);
@@ -65,11 +70,6 @@ var getQuery = function getQuery(startDate, endDate, minFavorites, minCounts) {
         "' and STR(t.created_at) <= '" + endDate + "' with n, count(r) as cnt " + 
         "order by cnt DESC where cnt >= " + minCounts + " return n.name, cnt limit 20;";
     console.log(query);
-    /*
-    if (debug) {
-        return "match (n:Hashtag)-[r:TAGS]->(t:Tweet) where t.text is not null and t.favorites >= 0 and STR(t.created_at) > '1419049079000' and STR(t.created_at) < '1419235199999' with t, n, count(r) as cnt order by cnt DESC where cnt >= 0 return n.name, cnt, t.id limit 20;"
-    }
-    */
     return query;
 }
 
@@ -79,14 +79,25 @@ var updateHashtagTrend = function updateHashtagTrend(hashtags, dateTimeInMilSeco
     if (!hashtags || !dateTimeInMilSeconds) {
         return;
     }
-    hashtags.forEach(function process(data) {
+    //hashtags.forEach(function process(data) {
+    for (var i = 0; i < hashtags.length; ++i) {
+        var data = hashtags[i];
         var hashTagName = data[0];
+        if (skippableHashtags.indexOf(hashTagName) != -1) {
+            // Skip.
+            continue;
+        }
+        HashtagToTweet.update(hashTagName, dateTimeInMilSeconds, 
+                              hashTagToTweetMongoDone);
+        // Update hashtag trend table, and then update popular hashtag table through the
+        // updatePopularHashtags callback.
+        // Skippable hashtags will not be written to the hashtag trend table, so they will
+        // not show up in the popular hashtag table either.
         HashtagTrend.update({timeBucketId: dateTimeInMilSeconds, name: hashTagName},
                             {$set: {count: data[1], date: dateTimeInMilSeconds}},
                             {upsert: true},
-                            updatePopularHashtags);
-        HashtagToTweet.update(hashTagName, dateTimeInMilSeconds, null);
-    });
+                            updatePopularHashtags);        
+    }
 }
 
 var updatePopularHashtags = function updatePopularHashtags(err, result) {
@@ -95,10 +106,22 @@ var updatePopularHashtags = function updatePopularHashtags(err, result) {
     } else {
         var yesterdayBeginOfTheDay = getDateTimeInMilSeconds(-1, true, false);
         var beginOfTheDay = getDateTimeInMilSeconds(0, true, false);
-        PopularHashtag.update(HashtagTrend, yesterdayBeginOfTheDay, beginOfTheDay);
+        PopularHashtag.update(HashtagTrend, yesterdayBeginOfTheDay, beginOfTheDay,
+                              updatePopularHashtagsDone);               
     }
 }
 
+var hashTagToTweetMongoDone = function hashTagToTweetMongoDone(err, result) {
+    if (err) {
+        console.log(err);
+    }
+}
+
+var updatePopularHashtagsDone = function hashTagToTweetMongoDone(err, result) {
+    if (err) {
+        console.log(err);
+    }
+}
 // Returns GMT time.
 // delta is the difference to today. delta = 0 means get date time for 
 // today.
@@ -110,8 +133,18 @@ var getDateTimeInMilSeconds =
     date.setDate(date.getDate() + delta);
     if (beginningOfTheDay) {
         date.setHours(0,0,0,0);
+        /*
+        if (env == 'development') {
+            return 1;
+        }
+        */
     } else if (endOfTheDay) {
         date.setHours(23,59,59,999);
+        /*
+        if (env == 'development') {
+            return 9999999999999;
+        }
+        */
     }
     return date.getTime();
 }

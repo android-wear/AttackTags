@@ -34,11 +34,9 @@ var PopularHashtag = module.exports = function PopularHashtag() {
 var smallWeight = 1;
 var mediumWeight = 50;
 var largeWeight = 100;
-var blacklistedTags = ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
-                     "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
-                     "exploit", "technews", "technology"];
 
-PopularHashtag.update = function update(hashtagTrendModel, preDatetimeId, curDatetimeId) {
+PopularHashtag.update = function update(hashtagTrendModel, preDatetimeId, curDatetimeId,
+                                        callback) {
     var baselineTags = [];
     var newTags = [];
     findHashtags(hashtagTrendModel, preDatetimeId, function findNewTags(err, tags) {
@@ -54,7 +52,8 @@ PopularHashtag.update = function update(hashtagTrendModel, preDatetimeId, curDat
             console.log(err);
         } else {
             newTags = tags;
-            PopularHashtag.compareAndUpdate(baselineTags, newTags, curDatetimeId);
+            PopularHashtag.compareAndUpdate(baselineTags, newTags, curDatetimeId,
+                                            callback);
         }
     }
 }
@@ -65,22 +64,17 @@ var findHashtags = function findHashtags(hashtagTrendModel, dateInMilSecond, cal
     .exec(callback);
 }
 
-PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newTrends, dateTimeInMilSeconds) {
+PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newTrends, 
+                                                            dateTimeInMilSeconds, 
+                                                            callback) {
     var nameCollections = [];
     for (var i = 0; i < baselineTrends.length; ++i) {
         nameCollections.push(baselineTrends[i].name);
     }
-    console.log("oldTrends: " + baselineTrends.length);
-    console.log("newTrends: " + newTrends.length);
     if (newTrends.length == 0) {
         newTrends = baselineTrends;
     }
     for (var i = 0; i < newTrends.length; ++i) {
-        if (blacklistedTags.indexOf(newTrends[i].name) != -1) {
-            // Skip.
-            console.log("Skipping " + newTrends[i].name);
-            continue;
-        }
         var index = nameCollections.indexOf(newTrends[i].name);
         if (index == -1) {
             console.log("Add: " + newTrends[i].name);
@@ -88,7 +82,7 @@ PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newT
                    dateTimeInMilSeconds,
                    newTrends[i].count,
                    largeWeight + newTrends[i].count,
-                   done);
+                   callback);
         } else {
             var countDifference = newTrends[i].count - baselineTrends[index].count;
             if (countDifference > 0) {
@@ -96,16 +90,10 @@ PopularHashtag.compareAndUpdate = function compareAndUpdate(baselineTrends, newT
                        dateTimeInMilSeconds,
                        newTrends[i].count,
                        mediumWeight + countDifference,
-                       done);
+                       callback);
             }
         }
-    }
-    
-    function done(err, res) {
-        if (err) {
-            console.log(err);
-        }
-    }
+    }    
 }
 
 var update = function update(name, dateTimeInMilSeconds, count, weight, callback) {

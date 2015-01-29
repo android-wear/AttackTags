@@ -3,14 +3,26 @@
     "port": 27017,
     "uristring": "mongodb://localhost/TestAttackTags",
     "neo4jConnectionString": "http://localhost:7474",
-    "runningIntervalInMs": 30000, 
-    "enableDebugLogging": true
+    "runningIntervalInMs": 5000, 
+    "enableDebugLogging": true,
+    "minFavoritesCount": 1,
+    "minTweetCount": 2,
+    "skippableHashtags": ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
+                     "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
+                     "exploit", "technews", "technology", "privacy", "vulnerability",
+                     "1337day", "privacychat", "netsuite", "netsec"]
   },
   "production": {
     "port": 27017,
     "uristring": "mongodb://localhost/AttackTags",
     "neo4jConnectionString": "http://localhost:7474",    
     "runningIntervalInMs": 1666000,
-    "enableDebugLogging": true
+    "enableDebugLogging": true,
+    "minFavoritesCount": 1,
+    "minTweetCount": 2,
+    "skippableHashtags": ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
+                     "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
+                     "exploit", "technews", "technology", "privacy", "vulnerability",
+                     "1337day", "privacychat", "netsuite", "netsec"]        
   }
 }
