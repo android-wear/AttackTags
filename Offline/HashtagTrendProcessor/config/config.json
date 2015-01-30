@@ -10,12 +10,12 @@
     "skippableHashtags": ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
                      "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
                      "exploit", "technews", "technology", "privacy", "vulnerability",
-                     "1337day", "privacychat", "netsuite", "netsec"]
+                     "1337day", "privacychat", "netsuite", "netsec", "appsec"]
   },
   "production": {
     "port": 27017,
     "uristring": "mongodb://localhost/AttackTags",
-    "neo4jConnectionString": "http://localhost:7474",    
+    "neo4jConnectionString": "http://localhost:7474",
     "runningIntervalInMs": 1666000,
     "enableDebugLogging": true,
     "minFavoritesCount": 1,
@@ -23,6 +23,6 @@
     "skippableHashtags": ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
                      "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
                      "exploit", "technews", "technology", "privacy", "vulnerability",
-                     "1337day", "privacychat", "netsuite", "netsec"]        
+                     "1337day", "privacychat", "netsuite", "netsec", "appsec"]        
   }
 }
