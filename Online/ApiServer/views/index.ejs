@@ -58,7 +58,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-left">
                     <li>
-                        <a href="#breakouts">Breakouts</a>
+                        <a href="#hottags">Hot</a>
                     </li>
                     <li>
                         <a href="#news" >News</a>
@@ -109,35 +109,30 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h4 class="page-header">Breakouts 
-                    <small>- Most Recent Security Topics</small>
+                <h4 class="page-header">Hot
+                    <small>- Most popular Hashtags</small>
                 </h4>
             </div>
         </div>
         <!-- /.row -->
-
-        <!-- /.row -->
-
-        <% for (var i = 0; i < tweetsWithImg.tweetsWithUrl.length && i < 2; ++i) {%>
+        <!-- Project One -->
         <div class="row">
             <div class="col-md-2">
-                <a href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
-                    <img height="120" width="120" class="img-responsive" src="<%=tweetsWithImg.imgList[i].unescapedUrl%>" alt="">
+                <a href="#">
+                  <!--5
+                    <img class="img-responsive" src="http://placehold.it/120x120" alt="">
+                  -->
+                  <h4>#HelloWorld</h4>
                 </a>
             </div>
             <div class="col-md-9">
-                <h4><%=tweetsWithImg.tweetsWithUrl[i].text%></h4>
-                <a class="btn btn-primary" href="<%=tweetsWithImg.tweetsWithUrl[i].link%>" target="_blank">
-                    View News<span class="glyphicon glyphicon-chevron-right"></span>
-                </a>
+                <p class="col-md-9">Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p>
+                <a class="btn btn-xs btn-primary pull-right" href="#">View <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <p class="col-md-9">Laudantium veniam exercitationem expedita laborum at voluptate. Labore, voluptates totam at aut nemo deserunt rem magni pariatur quos perspiciatis atque eveniet unde.</p>
+                <a class="btn btn-xs btn-primary pull-right" href="#">View <span class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
         </div>
         <!-- /.row -->
-
-        <hr>
-        
-        <% } %>
-
         <hr>
     </div>
     <!-- /.container -->
