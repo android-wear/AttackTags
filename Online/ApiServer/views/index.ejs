@@ -90,14 +90,16 @@
                 <h4 class="page-header">AttackTags 
                     <medium>- Real time threat intelligence</medium>
                 </h4>
+                
                 <p>
                     <medium>Today's Most Popular Hash Tags:</medium>
                     <medium>
-                    <% hashtags.forEach(function print(data) {%>
-                    #<%=data.name%>,    
+                    <% hashtagsWithTweets.forEach(function print(data) {%>
+                    #<%=data%>,    
                     <% })%>
                     </medium>
-                </p>        
+                </p> 
+                  
             </div>
         </div>
     </div>

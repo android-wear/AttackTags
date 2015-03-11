@@ -1,4 +1,5 @@
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
+var Tweet = require('./tweet.js');
 
 //Schema for the hash tag.
 var hashtagSchema = new mongoose.Schema({
@@ -30,16 +31,16 @@ var HashtagModel = mongoose.model("PopularHashtag", hashtagSchema);
 var PopularHashtag = module.exports = function PopularHashtag() {
 }
 
-PopularHashtag.getTags = function getTags(callback) {
+PopularHashtag.getTags = function getTags(isTest, callback) {    
+    var startTimeInMs = isTest ? 0 : getDateTimeInMilSeconds(-1);
+    var endTimeInMs = getDateTimeInMilSeconds(0);
     PopularHashtag.getTagsFromTimeRange(
-         // Start date sets to 3 days ago.
-         getDateTimeInMilSeconds(-2),
-         getDateTimeInMilSeconds(0),
-         callback);
+         // Get popular hashtags from past two days.
+         startTimeInMs, endTimeInMs, callback);
 }
 
 PopularHashtag.getTagsFromTimeRange = function getTagsFromTimeRange(
-    startDate, endDate, callback) {
+    startDate, endDate, callback) {    
     HashtagModel.where('dateTimeInMilSeconds').gte(startDate).lte(endDate)
                 .sort('-weight').exec(callback);
 }

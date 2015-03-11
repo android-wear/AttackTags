@@ -115,6 +115,17 @@ Tweet.getTweetsByCategoryAndDate = function getTweetsByCategory(category,
     }
 }
 
+Tweet.getTweetById = function getTweetById(id, callback) {
+    TweetModel.where('id').equals(id).exec(callback);
+    function processData(err, tweetList) {
+        if (err) {
+            return callback(err);
+        }
+        
+        return convertTweetModelToTweet(tweetList, callback);
+    }    
+}
+
 var convertTweetModelToTweet = function convertTweetModelToTweet(tweetList, callback) {
     if (!tweetList) {
         return callback("Did not get any tweets from DB.");
