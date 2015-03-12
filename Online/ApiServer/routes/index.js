@@ -5,6 +5,7 @@ var Tweet = require('../models/tweet');
 var Image = require('../models/image');
 var PopularHashtag = require('../models/popularHashtag');
 var HashtagToTweet = require('../models/hashtagToTweet');
+var util = require('util');
 
 var env = 
     process.env.NODE_ENV == 'production' || process.env.NODE_ENV == 'development' ?
@@ -106,30 +107,51 @@ var getDateTimeInMilSeconds = function getDateTimeInMilSeconds(delta) {
   return date.getTime();
 }
 
-var getTagsAndTweets = function getTagsAndTweets(callback) {
+/*
+    getHashtagsToTweetsMapping(
+	null, // err
+	[{hashtag: 'h1', tweets: [{tweetId: 1, name: 't1'}, {tweetId: 2, name: 't2'}]}, {hashtag: 'h2', tweets: [{tweetId: 2, name: 't2'}, {...}]}]);
+*/
+var getTagsAndTweets = function getTagsAndTweets(getHashtagsToTweetsMapping) {
+
     PopularHashtag.getTags(isTest, function getTweetsFromHashtagList(err, hashtags) {
         if (err) {
             return callback(err);
         }
-        hashtags.forEach(function getTweetIdForEachHashtag(hashtag) {
-	    var startDate = isTest ? 0 : getDateTimeInMilSeconds(-2); /* startDate = 2 days ago */
-            HashtagToTweet.getTweetId(hashtag.name, 
+	var startDate = isTest ? 0 : getDateTimeInMilSeconds(-2);
+	async.mapSeries(
+	    hashtags,
+            function getTweetIdForEachHashtag(hashtag, doneForAllHashtags) {	    
+            	HashtagToTweet.getTweetId(hashtag.name, 
                                       startDate,
                                       getDateTimeInMilSeconds(0),  // endDate = today.
-                                      getTweetFromTweetIdList);
-        });
+                                      function getTweetsFromTweetIdList(err, tweetIdList) {
+					  if (err) {
+					      return callback(err);
+					  }
+					  async.mapSeries(
+					      tweetIdList, 
+ 					      function getTweetForEachTweetId(tweetId, postProcess) {
+						      Tweet.getTweetById(
+		                                          tweetId.tweetId,
+							  postProcess); 
+					      }, 
+                                              function postProcess(err, tweets) {
+						  doneForAllHashtags(null, 
+								     {
+								         hashtag: hashtag.name, 
+									 tweets: tweets
+								     });
+					      });
+            			      }
+	        );
+            },
+            function doneForAllHashtags(err, hashTagsToTweetsMapping) {
+		//console.log(util.inspect(hashTagsToTweetsMapping, false, null));
+		getHashtagsToTweetsMapping(null, hashTagsToTweetsMapping);
+            }
+	);
     });
-    
-    var getTweetFromTweetIdList = function getTweetFromTweetId(err, tweetIds) {
-        if (err) {
-            return callback(err);
-        }
-        console.log("haha: " + tweetIds);
-        tweetIds.forEach(function getTweetForEachTweetId(tweetId) {
-            Tweet.getTweetById(tweetId.tweetId,
-                               callback /* the callback passed into getTagsAndTweets */); 
-        });
-    }
 }
 
 module.exports = router;
