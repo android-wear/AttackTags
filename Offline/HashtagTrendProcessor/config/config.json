@@ -10,7 +10,8 @@
     "skippableHashtags": ["infosec", "cybersecurity", "cyber", "happynewyear", "newyear", 
                      "socialmedia", "security", "hacking", "datasecurity", "news", "iot",
                      "exploit", "technews", "technology", "privacy", "vulnerability",
-                     "1337day", "privacychat", "netsuite", "netsec", "appsec"]
+                     "1337day", "exploits", "bhasia", "veritas", "privacychat", "netsuite", "netsec", 
+		     "appsec", "assange", "tor"]
   },
   "production": {
     "port": 27017,

@@ -3,7 +3,7 @@
     "port": 27017,
     "uristring": "mongodb://localhost/TestAttackTags",
     "runningIntervalInMs": 1000, 
-    "enableDebugLogging": true
+    "enableDebugLogging": false
   },
   "production": {
     "port": 27017,

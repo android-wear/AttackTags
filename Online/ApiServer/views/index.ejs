@@ -89,17 +89,7 @@
             <div class="col-lg-12">
                 <h4 class="page-header">AttackTags 
                     <medium>- Real time threat intelligence</medium>
-                </h4>
-                
-                <p>
-                    <medium>Today's Most Popular Hash Tags:</medium>
-                    <medium>
-                    <% hashtagsWithTweets.forEach(function print(data) {%>
-                    #<%=data%>,    
-                    <% })%>
-                    </medium>
-                </p> 
-                  
+                </h4>                
             </div>
         </div>
     </div>
@@ -118,7 +108,13 @@
         </div>
         <!-- /.row -->
 	<% for (var i = 0; i < hashtagsWithTweets.length; ++i) {%>
-	<%     if (hashtagsWithTweets[i].tweets.length != 0) {%>
+	<%     var shouldRender = false; %>
+	<%     for (var index = 0; !shouldRender && index < hashtagsWithTweets[i].tweets.length; ++index) {%>
+	<%         if (hashtagsWithTweets[i].tweets[index] && hashtagsWithTweets[i].tweets[index][0]) {%>
+	<%             shouldRender = true;%>
+	<%         }%>
+	<%     }%>
+	<%     if (shouldRender) {%>
         <!-- one hashtag -->
         <div class="row">
             <div class="col-md-2">
@@ -131,11 +127,13 @@
             </div>
             <div class="col-md-9">
 		<% hashtagsWithTweets[i].tweets.forEach(function print(tweet) { %>
+		<%     if (tweet && tweet[0]) { %>
                 <p class="col-md-9"><%=tweet[0].text%></p>
                 <a class="btn btn-xs btn-primary pull-right" href="<%=tweet[0].link%>">View 
 			<span class="glyphicon glyphicon-chevron-right">
 			</span>
 		</a>
+		<%     }%>
                 <% }) %>
             </div>
         </div>
