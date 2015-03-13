@@ -122,17 +122,18 @@
                   <!--5
                     <img class="img-responsive" src="http://placehold.it/120x120" alt="">
                   -->
-                  <h4>#<%=hashtagsWithTweets[i].hashtag%></h4>
+                  <h4><%=hashtagsWithTweets[i].hashtag%></h4>
                 </a>
             </div>
             <div class="col-md-9">
 		<% hashtagsWithTweets[i].tweets.forEach(function print(tweet) { %>
 		<%     if (tweet && tweet[0]) { %>
                 <p class="col-md-9"><%=tweet[0].text%></p>
-                <a class="btn btn-xs btn-primary pull-right" href="<%=tweet[0].link%>">View 
-			<span class="glyphicon glyphicon-chevron-right">
-			</span>
-		</a>
+                <a class="btn btn-xs btn-primary pull-right" href="<%=tweet[0].link%>" target="_blank">
+                View 
+			         <span class="glyphicon glyphicon-chevron-right">
+			         </span>
+		        </a>
 		<%     }%>
                 <% }) %>
             </div>
